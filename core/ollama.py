@@ -79,7 +79,7 @@ JOB DESCRIPTION:
 Analyse the match and respond using this structure:
 
 ## Match Score
-**Score: [0-100]/100**
+**Score: NN/100**  (replace NN with your numeric score, e.g. **Score: 72/100**)
 [One sentence verdict on the overall fit]
 
 ## Summary

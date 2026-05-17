@@ -9,6 +9,22 @@ from django.views.decorators.http import require_POST
 from .models import MasterResume, JobApplication, Analysis
 from . import ollama as ol
 
+_ATS_SCORE_PATTERNS = (
+    r'(?i)\*{0,2}Score:\s*(\d{1,3})\s*/\s*100',  # **Score: 75/100**
+    r'(?i)SCORE:\s*(\d{1,3})',                     # legacy SCORE: 75
+)
+
+
+def parse_ats_score(text):
+    """Extract the 0–100 ATS match score from model output."""
+    for pattern in _ATS_SCORE_PATTERNS:
+        match = re.search(pattern, text)
+        if match:
+            score = int(match.group(1))
+            if 0 <= score <= 100:
+                return score
+    return None
+
 
 def dashboard(request):
     try:
@@ -98,6 +114,11 @@ def job_detail(request, job_id):
 
     try:
         analysis = Analysis.objects.get(job=job)
+        if analysis.ats_match and analysis.ats_score is None:
+            score = parse_ats_score(analysis.ats_match)
+            if score is not None:
+                analysis.ats_score = score
+                analysis.save(update_fields=['ats_score', 'updated_at'])
         needs_analysis = not analysis.is_complete()
     except Analysis.DoesNotExist:
         analysis = None
@@ -140,9 +161,9 @@ def stream_analysis(request, job_id):
             setattr(analysis, field_name, full_text)
 
             if tab_key == 'match':
-                score_match = re.search(r'SCORE:\s*(\d+)', full_text)
-                if score_match:
-                    analysis.ats_score = int(score_match.group(1))
+                score = parse_ats_score(full_text)
+                if score is not None:
+                    analysis.ats_score = score
 
             analysis.save()
             yield f"event: tab_complete\ndata: {json.dumps({'tab': tab_key})}\n\n"
