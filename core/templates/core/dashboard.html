@@ -1,0 +1,96 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Dashboard — LocalHire{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">Dashboard</h1>
+    <p class="page-sub">Your private resume workspace. Everything stays on this machine.</p>
+</div>
+
+<div class="dashboard-grid">
+
+    <section class="resume-section card">
+        <div class="card-header">
+            <h2 class="card-title">Master Resume</h2>
+        </div>
+        {% if resume %}
+        <div class="resume-active">
+            <div class="resume-info">
+                <span class="resume-icon">📄</span>
+                <div>
+                    <div class="resume-filename">{{ resume.filename }}</div>
+                    <div class="resume-date">Uploaded {{ resume.uploaded_at|date:"N j, Y" }}</div>
+                </div>
+            </div>
+            <form method="post" action="{% url 'upload_resume' %}" enctype="multipart/form-data" class="replace-form">
+                {% csrf_token %}
+                <label class="btn btn-ghost">
+                    Replace
+                    <input type="file" name="resume" accept=".pdf,.docx" class="hidden-input"
+                        onchange="this.form.submit()" />
+                </label>
+            </form>
+        </div>
+        {% else %}
+        <div class="resume-empty">
+            <p>Upload your master resume to get started. You only need to do this once.</p>
+            <form method="post" action="{% url 'upload_resume' %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                <label class="btn btn-primary upload-label">
+                    Upload resume (PDF or DOCX)
+                    <input type="file" name="resume" accept=".pdf,.docx" class="hidden-input"
+                        onchange="this.form.submit()" />
+                </label>
+            </form>
+        </div>
+        {% endif %}
+    </section>
+
+</div>
+
+<section class="jobs-section">
+    <div class="section-header">
+        <h2 class="section-title">Job History</h2>
+        {% if resume %}
+        <a href="{% url 'new_job' %}" class="btn btn-primary">+ New job</a>
+        {% endif %}
+    </div>
+
+    {% if jobs %}
+    <div class="jobs-grid">
+        {% for job in jobs %}
+        <a href="{% url 'job_detail' job.id %}" class="job-card">
+            <div class="job-card-top">
+                <div class="job-company">{{ job.company }}</div>
+                {% if job.analysis.ats_score is not None %}
+                {% if job.analysis.ats_score >= 70 %}
+                <span class="score-badge score-high">{{ job.analysis.ats_score }}%</span>
+                {% elif job.analysis.ats_score >= 45 %}
+                <span class="score-badge score-mid">{{ job.analysis.ats_score }}%</span>
+                {% else %}
+                <span class="score-badge score-low">{{ job.analysis.ats_score }}%</span>
+                {% endif %}
+                {% else %}
+                <span class="score-badge score-pending">—</span>
+                {% endif %}
+            </div>
+            <div class="job-title">{{ job.job_title }}</div>
+            <div class="job-date">{{ job.created_at|date:"N j, Y" }}</div>
+            {% if job.analysis.resume_approved %}
+            <div class="job-tag">Resume ready</div>
+            {% elif job.analysis.is_complete %}
+            <div class="job-tag">Analysis done</div>
+            {% endif %}
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="jobs-empty">
+        <p>No jobs yet. {% if resume %}<a href="{% url 'new_job' %}">Add your first job →</a>{% else %}Upload your
+            resume first to get started.{% endif %}</p>
+    </div>
+    {% endif %}
+</section>
+
+{% endblock %}

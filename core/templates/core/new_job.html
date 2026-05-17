@@ -1,0 +1,45 @@
+{% extends 'core/base.html' %}
+
+{% block title %}New Job — LocalHire{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <h1 class="page-title">New Job</h1>
+    <p class="page-sub">Using resume: <strong>{{ resume.filename }}</strong></p>
+</div>
+
+<div class="form-page">
+    <form method="post" action="{% url 'create_job' %}" class="job-form card">
+        {% csrf_token %}
+
+        <div class="form-row">
+            <div class="form-group">
+                <label class="form-label" for="job_title">Job Title</label>
+                <input type="text" id="job_title" name="job_title" class="form-input"
+                    placeholder="e.g. Senior Backend Engineer" required autofocus />
+            </div>
+            <div class="form-group">
+                <label class="form-label" for="company">Company</label>
+                <input type="text" id="company" name="company" class="form-input" placeholder="e.g. Acme Corp"
+                    required />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="jd_text">
+                Job Description
+                <span class="form-hint">Paste the full job description including requirements, responsibilities, and
+                    company info</span>
+            </label>
+            <textarea id="jd_text" name="jd_text" class="form-textarea"
+                placeholder="Paste the complete job description here..." required rows="18"></textarea>
+        </div>
+
+        <div class="form-actions">
+            <a href="{% url 'dashboard' %}" class="btn btn-ghost">Cancel</a>
+            <button type="submit" class="btn btn-primary">Run analysis →</button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

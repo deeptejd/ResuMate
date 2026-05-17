@@ -1,0 +1,50 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}LocalHire{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+</head>
+
+<body>
+
+    <nav class="nav">
+        <div class="nav-inner">
+            <a href="{% url 'dashboard' %}" class="nav-logo">
+                <span class="nav-logo-mark">L</span>
+                LocalHire
+            </a>
+            <div class="nav-right">
+                <span class="ollama-status {% if ollama_status.ok %}status-ok{% else %}status-error{% endif %}">
+                    <span class="status-dot"></span>
+                    {% if ollama_status.ok %}
+                    {{ ollama_status.model }}
+                    {% else %}
+                    Ollama offline
+                    {% endif %}
+                </span>
+                <a href="{% url 'new_job' %}" class="btn btn-primary">+ New job</a>
+            </div>
+        </div>
+    </nav>
+
+    {% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+        <div class="message message-{{ message.tags }}">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <main class="main">
+        {% block content %}{% endblock %}
+    </main>
+
+    <script src="{% static 'js/app.js' %}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+
+</html>

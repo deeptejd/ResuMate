@@ -1,0 +1,191 @@
+{% extends 'core/base.html' %}
+
+{% block title %}{{ job.job_title }} at {{ job.company }} — LocalHire{% endblock %}
+
+{% block content %}
+<div class="job-detail-header">
+    <div class="job-detail-meta">
+        <a href="{% url 'dashboard' %}" class="back-link">← Dashboard</a>
+        <div class="job-detail-company">{{ job.company }}</div>
+        <h1 class="job-detail-title">{{ job.job_title }}</h1>
+        <div class="job-detail-date">{{ job.created_at|date:"N j, Y" }}</div>
+    </div>
+    <div class="job-detail-actions">
+        {% if analysis and analysis.ats_score is not None %}
+        {% if analysis.ats_score >= 70 %}
+        <span class="score-badge score-high score-large">{{ analysis.ats_score }}% match</span>
+        {% elif analysis.ats_score >= 45 %}
+        <span class="score-badge score-mid score-large">{{ analysis.ats_score }}% match</span>
+        {% else %}
+        <span class="score-badge score-low score-large">{{ analysis.ats_score }}% match</span>
+        {% endif %}
+        {% endif %}
+        <button class="btn btn-ghost" onclick="toggleUpdateJd()">Update JD</button>
+    </div>
+</div>
+
+<div class="update-jd-panel" id="updateJdPanel" style="display:none;">
+    <form method="post" action="{% url 'update_jd' job.id %}" class="card">
+        {% csrf_token %}
+        <div class="form-group">
+            <label class="form-label">Job Description</label>
+            <textarea name="jd_text" class="form-textarea" rows="10">{{ job.jd_text }}</textarea>
+        </div>
+        <div class="form-actions">
+            <button type="button" class="btn btn-ghost" onclick="toggleUpdateJd()">Cancel</button>
+            <button type="submit" class="btn btn-primary">Update and re-run analysis</button>
+        </div>
+    </form>
+</div>
+
+<div class="progress-bar-wrap" id="progressBar" style="display:none;">
+    <div class="progress-bar-inner">
+        <span class="progress-label" id="progressLabel">Starting analysis...</span>
+        <div class="progress-track">
+            <div class="progress-fill" id="progressFill" style="width:0%"></div>
+        </div>
+    </div>
+</div>
+
+<div class="tabs-wrap">
+    <div class="tabs" role="tablist">
+        <button class="tab tab-active" onclick="switchTab('match')" id="tab-btn-match" role="tab">
+            <span class="tab-dot" id="dot-match"></span> ATS Match
+        </button>
+        <button class="tab" onclick="switchTab('cover')" id="tab-btn-cover" role="tab">
+            <span class="tab-dot" id="dot-cover"></span> Cover Letter
+        </button>
+        <button class="tab" onclick="switchTab('decode')" id="tab-btn-decode" role="tab">
+            <span class="tab-dot" id="dot-decode"></span> JD Decoder
+        </button>
+        <button class="tab" onclick="switchTab('flags')" id="tab-btn-flags" role="tab">
+            <span class="tab-dot" id="dot-flags"></span> Red Flags
+        </button>
+        <button class="tab" onclick="switchTab('prep')" id="tab-btn-prep" role="tab">
+            <span class="tab-dot" id="dot-prep"></span> Interview Prep
+        </button>
+    </div>
+
+    <div class="tab-panels">
+        <div class="tab-panel tab-panel-active" id="panel-match">
+            <div class="tab-content" id="content-match">
+                {% if analysis and analysis.ats_match %}
+                <pre class="analysis-text">{{ analysis.ats_match }}</pre>
+                {% else %}
+                <div class="tab-loading" id="loading-match">Waiting to start...</div>
+                {% endif %}
+            </div>
+            {% if analysis and analysis.cover_letter %}
+            <div class="copy-row">
+                <button class="btn btn-ghost btn-sm" onclick="copyText('content-match')">Copy</button>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="tab-panel" id="panel-cover">
+            <div class="tab-content" id="content-cover">
+                {% if analysis and analysis.cover_letter %}
+                <pre class="analysis-text">{{ analysis.cover_letter }}</pre>
+                {% else %}
+                <div class="tab-loading" id="loading-cover">Waiting...</div>
+                {% endif %}
+            </div>
+            {% if analysis and analysis.cover_letter %}
+            <div class="copy-row">
+                <button class="btn btn-ghost btn-sm" onclick="copyText('content-cover')">Copy letter</button>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="tab-panel" id="panel-decode">
+            <div class="tab-content" id="content-decode">
+                {% if analysis and analysis.jd_decode %}
+                <pre class="analysis-text">{{ analysis.jd_decode }}</pre>
+                {% else %}
+                <div class="tab-loading" id="loading-decode">Waiting...</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="tab-panel" id="panel-flags">
+            <div class="tab-content" id="content-flags">
+                {% if analysis and analysis.red_flags %}
+                <pre class="analysis-text">{{ analysis.red_flags }}</pre>
+                {% else %}
+                <div class="tab-loading" id="loading-flags">Waiting...</div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="tab-panel" id="panel-prep">
+            <div class="tab-content" id="content-prep">
+                {% if analysis and analysis.interview_prep %}
+                <pre class="analysis-text">{{ analysis.interview_prep }}</pre>
+                {% else %}
+                <div class="tab-loading" id="loading-prep">Waiting...</div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="tailored-section card" id="tailoredSection">
+    <div class="card-header">
+        <h2 class="card-title">Tailored Resume</h2>
+    </div>
+
+    {% if analysis and analysis.resume_approved and analysis.tailored_resume %}
+    <div id="resumeApproved">
+        <div class="resume-preview">
+            <pre class="analysis-text resume-text">{{ analysis.tailored_resume }}</pre>
+        </div>
+        <div class="export-actions">
+            <a href="{% url 'export_pdf' job.id %}" class="btn btn-primary">Export PDF</a>
+            <a href="{% url 'export_md' job.id %}" class="btn btn-ghost">Export Markdown</a>
+            <button class="btn btn-ghost" onclick="startResumeGeneration()">Regenerate</button>
+        </div>
+    </div>
+
+    {% elif analysis and analysis.tailored_resume and not analysis.resume_approved %}
+    <div id="resumePreview">
+        <p class="preview-note">Review the rewritten resume below. Approve it to unlock exports.</p>
+        <div class="resume-preview">
+            <pre class="analysis-text resume-text" id="resumePreviewText">{{ analysis.tailored_resume }}</pre>
+        </div>
+        <div class="preview-actions">
+            <button class="btn btn-primary" onclick="approveResume({{ job.id }})">Approve and save</button>
+            <button class="btn btn-ghost" onclick="startResumeGeneration()">Regenerate</button>
+        </div>
+    </div>
+
+    {% else %}
+    <div id="resumeNotGenerated">
+        {% if analysis and analysis.is_complete %}
+        <p class="tailored-intro">Analysis complete. Generate a rewritten version of your resume tailored specifically
+            for this role.</p>
+        <button class="btn btn-primary" onclick="startResumeGeneration()">Generate tailored resume</button>
+        {% else %}
+        <p class="tailored-intro tailored-waiting">Complete the analysis above first to generate a tailored resume.</p>
+        {% endif %}
+    </div>
+    {% endif %}
+
+    <div id="resumeGenerating" style="display:none;">
+        <div class="generating-header">
+            <span class="generating-label">Writing your tailored resume...</span>
+            <div class="spinner"></div>
+        </div>
+        <pre class="analysis-text resume-text" id="resumeStreamText"></pre>
+    </div>
+</section>
+
+<div id="jobId" data-id="{{ job_id }}" style="display:none;"></div>
+<div id="needsAnalysis" data-value="{{ needs_analysis }}" style="display:none;"></div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    initJobDetail();
+</script>
+{% endblock %}
