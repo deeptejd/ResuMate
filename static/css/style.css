@@ -1020,6 +1020,26 @@ pre {
     background: var(--bg-raised);
     border-radius: 4px;
     overflow: hidden;
+    position: relative;
+}
+
+.progress-track::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 40%;
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.5),
+        transparent
+    );
+    animation: progress-shimmer 1.4s linear infinite;
+    pointer-events: none;
+    z-index: 1;
+    will-change: left;
 }
 
 .progress-fill {
@@ -1028,14 +1048,7 @@ pre {
     border-radius: 4px;
     transition: width 0.4s var(--ease);
     position: relative;
-}
-
-.progress-fill::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
-    animation: shimmer 1.5s infinite;
+    z-index: 0;
 }
 
 /* TABS */
@@ -1322,9 +1335,13 @@ pre {
     }
 }
 
-@keyframes shimmer {
-    0% { transform: translateX(-100%); }
-    100% { transform: translateX(100%); }
+@keyframes progress-shimmer {
+    0% {
+        left: -40%;
+    }
+    100% {
+        left: 100%;
+    }
 }
 
 /* RESPONSIVE */
