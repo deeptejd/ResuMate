@@ -137,6 +137,14 @@ def stream_analysis(request, job_id):
     analysis, _ = Analysis.objects.get_or_create(job=job)
     model = ol.get_model_name()
 
+    try:
+        active_resume = MasterResume.objects.filter(is_active=True).latest('uploaded_at')
+        if job.resume_id != active_resume.id:
+            job.resume = active_resume
+            job.save()
+    except MasterResume.DoesNotExist:
+        pass
+
     tabs = [
         ('match',  'ats_match',      ol.ats_match_prompt(job.resume.raw_text, job.jd_text)),
         ('cover',  'cover_letter',   ol.cover_letter_prompt(job.resume.raw_text, job.jd_text)),
@@ -180,6 +188,15 @@ def stream_tailored_resume(request, job_id):
     job = get_object_or_404(JobApplication, id=job_id)
     analysis = get_object_or_404(Analysis, job=job)
     model = ol.get_model_name()
+
+    try:
+        active_resume = MasterResume.objects.filter(is_active=True).latest('uploaded_at')
+        if job.resume_id != active_resume.id:
+            job.resume = active_resume
+            job.save()
+    except MasterResume.DoesNotExist:
+        pass
+
     prompt = ol.tailored_resume_prompt(
         job.resume.raw_text,
         job.jd_text,
