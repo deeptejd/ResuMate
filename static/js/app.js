@@ -89,7 +89,7 @@ function startAnalysisStream(jobId) {
     var loading = document.getElementById('loading-' + currentTab);
     if (loading) loading.style.display = 'none';
     var content = document.getElementById('content-' + currentTab);
-    if (content) content.innerHTML = '<pre class="analysis-text" id="stream-' + currentTab + '"></pre>';
+    if (content) content.innerHTML = '<div class="analysis-streaming" id="stream-' + currentTab + '"></div>';
   });
 
   source.addEventListener('token', function(e) {

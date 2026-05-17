@@ -1,4 +1,5 @@
 {% extends 'core/base.html' %}
+{% load md_filters %}
 
 {% block title %}{{ job.job_title }} at {{ job.company }} — LocalHire{% endblock %}
 
@@ -86,7 +87,7 @@
         <div class="tab-panel tab-panel-active" id="panel-match">
             <div class="tab-content" id="content-match">
                 {% if analysis and analysis.ats_match %}
-                <pre class="analysis-text">{{ analysis.ats_match }}</pre>
+                <div class="analysis-rendered">{{ analysis.ats_match|render_markdown }}</div>
                 {% else %}
                 <div class="tab-loading" id="loading-match">Analysing keyword match...</div>
                 {% endif %}
@@ -96,7 +97,7 @@
         <div class="tab-panel" id="panel-cover">
             <div class="tab-content" id="content-cover">
                 {% if analysis and analysis.cover_letter %}
-                <pre class="analysis-text">{{ analysis.cover_letter }}</pre>
+                <div class="analysis-rendered">{{ analysis.cover_letter|render_markdown }}</div>
                 {% else %}
                 <div class="tab-loading" id="loading-cover">Writing cover letter...</div>
                 {% endif %}
@@ -112,7 +113,7 @@
         <div class="tab-panel" id="panel-decode">
             <div class="tab-content" id="content-decode">
                 {% if analysis and analysis.jd_decode %}
-                <pre class="analysis-text">{{ analysis.jd_decode }}</pre>
+                <div class="analysis-rendered">{{ analysis.jd_decode|render_markdown }}</div>
                 {% else %}
                 <div class="tab-loading" id="loading-decode">Decoding job description...</div>
                 {% endif %}
@@ -122,7 +123,7 @@
         <div class="tab-panel" id="panel-flags">
             <div class="tab-content" id="content-flags">
                 {% if analysis and analysis.red_flags %}
-                <pre class="analysis-text">{{ analysis.red_flags }}</pre>
+                <div class="analysis-rendered">{{ analysis.red_flags|render_markdown }}</div>
                 {% else %}
                 <div class="tab-loading" id="loading-flags">Scanning for red flags...</div>
                 {% endif %}
@@ -132,7 +133,7 @@
         <div class="tab-panel" id="panel-prep">
             <div class="tab-content" id="content-prep">
                 {% if analysis and analysis.interview_prep %}
-                <pre class="analysis-text">{{ analysis.interview_prep }}</pre>
+                <div class="analysis-rendered">{{ analysis.interview_prep|render_markdown }}</div>
                 {% else %}
                 <div class="tab-loading" id="loading-prep">Building interview prep...</div>
                 {% endif %}

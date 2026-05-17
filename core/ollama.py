@@ -68,7 +68,7 @@ def stream_prompt(prompt, model=None):
 
 
 def ats_match_prompt(resume_text, jd_text):
-    return f"""You are an expert ATS (Applicant Tracking System) analyst.
+    return f"""You are an expert ATS (Applicant Tracking System) analyst. Use markdown formatting in your response — use **bold** for important terms, ## for section headers, and - for bullet points.
 
 RESUME:
 {resume_text}
@@ -76,24 +76,27 @@ RESUME:
 JOB DESCRIPTION:
 {jd_text}
 
-Analyse the match between this resume and job description. Use this exact format:
+Analyse the match and respond using this structure:
 
-SCORE: [a single number from 0 to 100]
-VERDICT: [one sentence summary of the fit]
-SUMMARY: [2 to 3 sentences on overall alignment]
+## Match Score
+**Score: [0-100]/100**
+[One sentence verdict on the overall fit]
 
-KEYWORDS FOUND:
-- [keyword from JD that is present in the resume]
-- [add all relevant ones, aim for 5 to 10]
+## Summary
+[2-3 sentences on overall alignment]
 
-KEYWORDS MISSING:
-- [important JD keyword that is absent from the resume]
-- [add all relevant ones, aim for 3 to 7]
+## Keywords Found ✓
+- **[keyword]** — [where it appears in the resume]
+- [repeat for all found keywords, aim for 5-10]
 
-SUGGESTIONS:
-1. [specific and actionable rewrite suggestion]
-2. [specific and actionable rewrite suggestion]
-3. [specific and actionable rewrite suggestion]
+## Keywords Missing ✗
+- **[keyword]** — [why it matters for this role]
+- [repeat for all missing keywords, aim for 3-7]
+
+## Suggestions to Improve Your Match
+1. **[Specific action]** — [explanation of what to change and why]
+2. **[Specific action]** — [explanation]
+3. **[Specific action]** — [explanation]
 
 Be honest. Do not fabricate experience."""
 
@@ -120,7 +123,7 @@ Write only the cover letter. No preamble. No explanation. No "here is your cover
 
 
 def jd_decode_prompt(jd_text):
-    return f"""You are a brutally honest career advisor who has read thousands of job descriptions.
+    return f"""You are a brutally honest career advisor who has read thousands of job descriptions. Use markdown formatting — ## for section headers, **bold** for decoded phrases, and - for bullet points.
 
 JOB DESCRIPTION:
 {jd_text}
@@ -129,51 +132,62 @@ Decode this job description. Translate the corporate language into plain honest 
 
 Use this exact format:
 
-CULTURE READ:
-[2 to 3 sentences on what this JD reveals about the company culture and work environment]
+## Culture Read
+[2-3 sentences on what this JD signals about the company culture and work environment]
 
-DECODED PHRASES:
-"[exact phrase from the JD]" -> [what it actually signals]
-[repeat for 6 to 8 of the most revealing phrases in the JD]
+## Decoded Phrases
+- **"[exact phrase from JD]"** → [what it actually signals in plain English]
+- **"[exact phrase]"** → [what it signals]
+[repeat for 6-8 of the most revealing phrases]
 
-WHAT THEY REALLY WANT:
-[The 3 actual priorities behind the listed requirements]
+## What They Really Want
+1. **[Priority 1]** — [explanation]
+2. **[Priority 2]** — [explanation]
+3. **[Priority 3]** — [explanation]
 
-COMPENSATION SIGNALS:
+## Compensation Signals
 [What the JD reveals or deliberately hides about pay, stability, and growth]
 
 Be honest but not cynical. Some phrases mean exactly what they say."""
 
 
 def red_flags_prompt(jd_text):
-    return f"""You are a career advisor helping candidates spot warning signs in job descriptions.
+    return f"""You are a career advisor helping candidates spot warning signs in job descriptions. Use markdown formatting — ## for headers, **bold** for flagged phrases, and emoji indicators for severity.
 
 JOB DESCRIPTION:
 {jd_text}
 
 Analyse this JD for red flags. Use this exact format:
 
-VERDICT: [GREEN or YELLOW or RED] - [one sentence overall assessment]
+## Overall Verdict
+**[🟢 GREEN / 🟡 YELLOW / 🔴 RED]** — [one sentence overall assessment]
 
-FLAG 1:
-SEVERITY: [HIGH or MEDIUM or LOW]
-PHRASE: "[exact text from the JD]"
-SIGNAL: [what this pattern typically means in practice]
-ASK THIS: [a question to probe this concern in the interview]
+## Flags Found
 
-FLAG 2:
-SEVERITY: [HIGH or MEDIUM or LOW]
-PHRASE: "[exact text from the JD]"
-SIGNAL: [what this pattern typically means in practice]
-ASK THIS: [a question to probe this concern in the interview]
+### 🔴 High Severity
+[Include this section only if high severity flags exist]
+- **"[exact phrase from JD]"**
+  - *What it signals:* [honest explanation of what this typically means]
+  - *Ask this in the interview:* "[specific question to probe this]"
 
+### 🟡 Medium Severity
+[Include this section only if medium severity flags exist]
+- **"[exact phrase from JD]"**
+  - *What it signals:* [explanation]
+  - *Ask this in the interview:* "[question]"
+
+### 🟢 Low Severity / Worth Noting
+[Include this section only if low severity flags exist]
+- **"[exact phrase from JD]"**
+  - *What it signals:* [explanation]
+  - *Ask this in the interview:* "[question]"
 [continue for 3 to 5 flags total]
 
 If there are genuinely no significant red flags say so clearly. Be calibrated, not everything is a problem."""
 
 
 def interview_prep_prompt(resume_text, jd_text):
-    return f"""You are an expert interview coach preparing a candidate for a specific role.
+    return f"""You are an expert interview coach preparing a candidate for a specific role. Use markdown formatting — ## for question headers, **bold** for key points, and *italics* for tips.
 
 RESUME:
 {resume_text}
@@ -181,18 +195,31 @@ RESUME:
 JOB DESCRIPTION:
 {jd_text}
 
-Generate exactly 6 interview questions tailored to this specific role and this specific candidate. Use this exact format:
+Generate exactly 6 interview questions tailored to this specific role and candidate, using this structure:
 
-Q1: [The interview question]
-WHY: [One sentence on what the interviewer is really probing]
-APPROACH: [2 to 3 sentences on how to answer well, referencing their actual resume experience where possible]
+## Question 1
+**[The interview question]**
 
-Q2:
+*Why they'll ask this:* [one sentence on what the interviewer is probing]
+
+**How to approach your answer:**
+[2-3 sentences on how to answer well, referencing their actual resume experience where relevant]
+
+---
+
+## Question 2
 [same format]
 
-[continue through Q6]
+---
 
-WILDCARD: [One unexpected question they should prepare for]
+[continue through Question 6]
+
+---
+
+## Wildcard ⚡
+**[One unexpected question they should prepare for]**
+
+*Why this might come up:* [brief explanation]
 
 Make every question specific to this role and this candidate. No generic questions."""
 
