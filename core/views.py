@@ -17,12 +17,10 @@ def dashboard(request):
         resume = None
 
     jobs = JobApplication.objects.select_related('analysis').order_by('-created_at')
-    ollama_status = ol.check_connection()
 
     return render(request, 'core/dashboard.html', {
         'resume': resume,
         'jobs': jobs,
-        'ollama_status': ollama_status,
     })
 
 
