@@ -5,20 +5,36 @@
 {% block content %}
 <div class="job-detail-header">
     <div class="job-detail-meta">
-        <a href="{% url 'dashboard' %}" class="back-link">← Dashboard</a>
+        <a href="{% url 'dashboard' %}" class="back-link">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                <path d="M9 3L4 7l5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            Dashboard
+        </a>
         <div class="job-detail-company">{{ job.company }}</div>
         <h1 class="job-detail-title">{{ job.job_title }}</h1>
         <div class="job-detail-date">{{ job.created_at|date:"N j, Y" }}</div>
     </div>
     <div class="job-detail-actions">
         {% if analysis and analysis.ats_score is not None %}
-        {% if analysis.ats_score >= 70 %}
-        <span class="score-badge score-high score-large">{{ analysis.ats_score }}% match</span>
-        {% elif analysis.ats_score >= 45 %}
-        <span class="score-badge score-mid score-large">{{ analysis.ats_score }}% match</span>
-        {% else %}
-        <span class="score-badge score-low score-large">{{ analysis.ats_score }}% match</span>
-        {% endif %}
+        <div class="score-ring-wrap">
+            {% if analysis.ats_score >= 70 %}
+            <div class="score-ring score-high" style="--score: {{ analysis.ats_score }}">
+                <div class="score-ring-inner">{{ analysis.ats_score }}%</div>
+            </div>
+            <span class="score-badge score-high score-large">Strong match</span>
+            {% elif analysis.ats_score >= 45 %}
+            <div class="score-ring score-mid" style="--score: {{ analysis.ats_score }}">
+                <div class="score-ring-inner">{{ analysis.ats_score }}%</div>
+            </div>
+            <span class="score-badge score-mid score-large">Moderate match</span>
+            {% else %}
+            <div class="score-ring score-low" style="--score: {{ analysis.ats_score }}">
+                <div class="score-ring-inner">{{ analysis.ats_score }}%</div>
+            </div>
+            <span class="score-badge score-low score-large">Low match</span>
+            {% endif %}
+        </div>
         {% endif %}
         <button class="btn btn-ghost" onclick="toggleUpdateJd()">Update JD</button>
     </div>
@@ -49,7 +65,7 @@
 
 <div class="tabs-wrap">
     <div class="tabs" role="tablist">
-        <button class="tab tab-active" onclick="switchTab('match')" id="tab-btn-match" role="tab">
+        <button class="tab tab-active" onclick="switchTab('match')" id="tab-btn-match" role="tab" aria-selected="true">
             <span class="tab-dot" id="dot-match"></span> ATS Match
         </button>
         <button class="tab" onclick="switchTab('cover')" id="tab-btn-cover" role="tab">
@@ -67,12 +83,22 @@
     </div>
 
     <div class="tab-panels">
+        <div class="tab-panel tab-panel-active" id="panel-match">
+            <div class="tab-content" id="content-match">
+                {% if analysis and analysis.ats_match %}
+                <pre class="analysis-text">{{ analysis.ats_match }}</pre>
+                {% else %}
+                <div class="tab-loading" id="loading-match">Analysing keyword match...</div>
+                {% endif %}
+            </div>
+        </div>
+
         <div class="tab-panel" id="panel-cover">
             <div class="tab-content" id="content-cover">
                 {% if analysis and analysis.cover_letter %}
                 <pre class="analysis-text">{{ analysis.cover_letter }}</pre>
                 {% else %}
-                <div class="tab-loading" id="loading-cover">Waiting...</div>
+                <div class="tab-loading" id="loading-cover">Writing cover letter...</div>
                 {% endif %}
             </div>
             {% if analysis and analysis.cover_letter %}
@@ -83,27 +109,12 @@
             {% endif %}
         </div>
 
-        <div class="tab-panel" id="panel-cover">
-            <div class="tab-content" id="content-cover">
-                {% if analysis and analysis.cover_letter %}
-                <pre class="analysis-text">{{ analysis.cover_letter }}</pre>
-                {% else %}
-                <div class="tab-loading" id="loading-cover">Waiting...</div>
-                {% endif %}
-            </div>
-            {% if analysis and analysis.cover_letter %}
-            <div class="copy-row">
-                <button class="btn btn-ghost btn-sm" onclick="copyText('content-cover')">Copy letter</button>
-            </div>
-            {% endif %}
-        </div>
-
         <div class="tab-panel" id="panel-decode">
             <div class="tab-content" id="content-decode">
                 {% if analysis and analysis.jd_decode %}
                 <pre class="analysis-text">{{ analysis.jd_decode }}</pre>
                 {% else %}
-                <div class="tab-loading" id="loading-decode">Waiting...</div>
+                <div class="tab-loading" id="loading-decode">Decoding job description...</div>
                 {% endif %}
             </div>
         </div>
@@ -113,7 +124,7 @@
                 {% if analysis and analysis.red_flags %}
                 <pre class="analysis-text">{{ analysis.red_flags }}</pre>
                 {% else %}
-                <div class="tab-loading" id="loading-flags">Waiting...</div>
+                <div class="tab-loading" id="loading-flags">Scanning for red flags...</div>
                 {% endif %}
             </div>
         </div>
@@ -123,7 +134,7 @@
                 {% if analysis and analysis.interview_prep %}
                 <pre class="analysis-text">{{ analysis.interview_prep }}</pre>
                 {% else %}
-                <div class="tab-loading" id="loading-prep">Waiting...</div>
+                <div class="tab-loading" id="loading-prep">Building interview prep...</div>
                 {% endif %}
             </div>
         </div>
@@ -132,7 +143,16 @@
 
 <section class="tailored-section card" id="tailoredSection">
     <div class="card-header">
-        <h2 class="card-title">Tailored Resume</h2>
+        <div style="display:flex;align-items:center;gap:12px;">
+            <div class="card-icon">
+                <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+                    <path d="M4 2h7l3 3v11a1 1 0 01-1 1H4a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" stroke-width="1.5"/>
+                    <path d="M11 2v4h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    <path d="M6 9h6M6 12h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+            </div>
+            <h2 class="card-title">Tailored Resume</h2>
+        </div>
     </div>
 
     {% if analysis and analysis.resume_approved and analysis.tailored_resume %}
@@ -162,8 +182,7 @@
     {% else %}
     <div id="resumeNotGenerated">
         {% if analysis and analysis.is_complete %}
-        <p class="tailored-intro">Analysis complete. Generate a rewritten version of your resume tailored specifically
-            for this role.</p>
+        <p class="tailored-intro">Analysis complete. Generate a rewritten version of your resume tailored specifically for this role.</p>
         <button class="btn btn-primary" onclick="startResumeGeneration()">Generate tailored resume</button>
         {% else %}
         <p class="tailored-intro tailored-waiting">Complete the analysis above first to generate a tailored resume.</p>

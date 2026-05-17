@@ -4,22 +4,39 @@
 
 {% block content %}
 <div class="page-header">
+    <div class="page-eyebrow">Private workspace</div>
     <h1 class="page-title">Dashboard</h1>
-    <p class="page-sub">Your private resume workspace. Everything stays on this machine.</p>
+    <p class="page-sub">
+        Upload your resume and get tailored insights for every role —
+        <span class="page-sub-highlight">powered by Google Gemma 4 models running locally</span> on your device.
+    </p>
 </div>
 
-<div class="dashboard-grid">
-
+<div class="dashboard-top">
     <section class="resume-section card">
         <div class="card-header">
-            <h2 class="card-title">Master Resume</h2>
+            <div style="display:flex;align-items:center;gap:12px;">
+                <div class="card-icon">
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
+                        <path d="M4 2h7l3 3v11a1 1 0 01-1 1H4a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="currentColor" stroke-width="1.5"/>
+                        <path d="M11 2v4h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        <path d="M6 9h6M6 12h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <h2 class="card-title">Master Resume</h2>
+            </div>
         </div>
         {% if resume %}
         <div class="resume-active">
             <div class="resume-info">
-                <span class="resume-icon">📄</span>
+                <div class="resume-icon-wrap">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+                        <path d="M5 2.5h7.5L15 5v12.5a.5.5 0 01-.5.5H5a.5.5 0 01-.5-.5V3a.5.5 0 01.5-.5z" stroke="currentColor" stroke-width="1.4"/>
+                        <path d="M12.5 2.5V6H16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                    </svg>
+                </div>
                 <div>
-                    <div class="resume-filename">{{ resume.filename }}</div>
+                    <div class="resume-filename" title="{{ resume.filename }}">{{ resume.filename }}</div>
                     <div class="resume-date">Uploaded {{ resume.uploaded_at|date:"N j, Y" }}</div>
                 </div>
             </div>
@@ -34,11 +51,21 @@
         </div>
         {% else %}
         <div class="resume-empty">
-            <p>Upload your master resume to get started. You only need to do this once.</p>
+            <div class="resume-empty-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M12 16V8m0 0l-3 3m3-3l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M4 20h16a1 1 0 001-1V7l-5-4H8L3 6v13a1 1 0 001 1z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                </svg>
+            </div>
+            <p>Upload your master resume to unlock AI-powered job analysis. PDF or DOCX — stored only on this device.</p>
             <form method="post" action="{% url 'upload_resume' %}" enctype="multipart/form-data">
                 {% csrf_token %}
-                <label class="btn btn-primary upload-label">
-                    Upload resume (PDF or DOCX)
+                <label class="btn btn-primary upload-label upload-zone">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                        <path d="M7 9V2.5M4 5.5L7 2.5 10 5.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M2.5 11.5h9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                    Upload resume
                     <input type="file" name="resume" accept=".pdf,.docx" class="hidden-input"
                         onchange="this.form.submit()" />
                 </label>
@@ -47,13 +74,24 @@
         {% endif %}
     </section>
 
+    {% if jobs %}
+    <div class="stat-pill">
+        <span class="stat-pill-value">{{ jobs|length }}</span>
+        <span class="stat-pill-label">{% if jobs|length == 1 %}Job tracked{% else %}Jobs tracked{% endif %}</span>
+    </div>
+    {% endif %}
 </div>
 
 <section class="jobs-section">
     <div class="section-header">
         <h2 class="section-title">Job History</h2>
         {% if resume %}
-        <a href="{% url 'new_job' %}" class="btn btn-primary">+ New job</a>
+        <a href="{% url 'new_job' %}" class="btn btn-primary">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                <path d="M7 2.5v9M2.5 7h9" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/>
+            </svg>
+            New job
+        </a>
         {% endif %}
     </div>
 
@@ -78,7 +116,7 @@
                     <form method="post" action="{% url 'delete_job' job.id %}" class="delete-form"
                         onsubmit="return confirm('Delete this job? This cannot be undone.')">
                         {% csrf_token %}
-                        <button type="submit" class="delete-btn" title="Delete job">✕</button>
+                        <button type="submit" class="delete-btn" title="Delete job" aria-label="Delete job">×</button>
                     </form>
                 </div>
             </div>
@@ -86,7 +124,12 @@
                 <div class="job-title">{{ job.job_title }}</div>
                 <div class="job-date">{{ job.created_at|date:"N j, Y" }}</div>
                 {% if job.analysis.resume_approved %}
-                <div class="job-tag">Resume ready</div>
+                <div class="job-tag job-tag-ready">
+                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none" aria-hidden="true">
+                        <path d="M2 5l2 2 4-4" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    Resume ready
+                </div>
                 {% elif job.analysis.is_complete %}
                 <div class="job-tag">Analysis done</div>
                 {% endif %}
@@ -96,8 +139,13 @@
     </div>
     {% else %}
     <div class="jobs-empty">
-        <p>No jobs yet. {% if resume %}<a href="{% url 'new_job' %}">Add your first job →</a>{% else %}Upload your
-            resume first to get started.{% endif %}</p>
+        <div class="jobs-empty-icon">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+                <rect x="6" y="8" width="20" height="18" rx="2" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M11 14h10M11 18h7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+        </div>
+        <p>No jobs yet. {% if resume %}<a href="{% url 'new_job' %}">Add your first job</a> to run local AI analysis.{% else %}Upload your resume first to get started.{% endif %}</p>
     </div>
     {% endif %}
 </section>

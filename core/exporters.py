@@ -74,5 +74,4 @@ def generate_pdf(job, analysis):
         else:
             pdf.set_font("Helvetica", "", 10)
             pdf.multi_cell(0, 6, stripped)
-
     return bytes(pdf.output())

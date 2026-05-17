@@ -200,6 +200,17 @@ function initJobDetail() {
   var needsAnalysis = needsEl.dataset.value === 'true';
   var jobId = jobIdEl.dataset.id;
 
+  if (!needsAnalysis) {
+    switchTab('match');
+    document.querySelectorAll('.tab-dot').forEach(function(dot) {
+      var id = dot.id.replace('dot-', '');
+      var content = document.getElementById('content-' + id);
+      if (content && content.querySelector('.analysis-text')) {
+        dot.classList.add('dot-active');
+      }
+    });
+  }
+
   if (needsAnalysis) {
     startAnalysisStream(jobId);
   }
