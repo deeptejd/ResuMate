@@ -676,6 +676,7 @@ pre {
 .copy-row {
     display: flex;
     justify-content: flex-end;
+    gap: 8px;
     margin-top: 16px;
     padding-top: 16px;
     border-top: 1px solid var(--border);
@@ -773,4 +774,80 @@ pre {
     50% {
         opacity: 0.3;
     }
+}
+
+/* JOB CARD WITH DELETE */
+.job-card-wrap {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    transition: border-color 0.15s;
+    overflow: hidden;
+}
+
+.job-card-wrap:hover {
+    border-color: var(--border-strong);
+}
+
+.job-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 16px 0;
+    gap: 8px;
+}
+
+.job-card-header-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.job-card {
+    display: block;
+    padding: 8px 16px 16px;
+    text-decoration: none;
+    background: transparent;
+    border: none;
+    border-radius: 0;
+}
+
+.job-card:hover {
+    text-decoration: none;
+    border-color: transparent;
+}
+
+/* override the old job-card standalone styles */
+.job-card-wrap .job-card {
+    border: none;
+    background: transparent;
+}
+
+.delete-form {
+    margin: 0;
+}
+
+.delete-btn {
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--text-3);
+    font-size: 12px;
+    width: 22px;
+    height: 22px;
+    border-radius: 5px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    font-family: inherit;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.delete-btn:hover {
+    background: var(--red-bg);
+    border-color: rgba(224, 84, 84, 0.3);
+    color: var(--red);
 }

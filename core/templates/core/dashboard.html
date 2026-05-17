@@ -60,29 +60,38 @@
     {% if jobs %}
     <div class="jobs-grid">
         {% for job in jobs %}
-        <a href="{% url 'job_detail' job.id %}" class="job-card">
-            <div class="job-card-top">
+        <div class="job-card-wrap">
+            <div class="job-card-header">
                 <div class="job-company">{{ job.company }}</div>
-                {% if job.analysis.ats_score is not None %}
-                {% if job.analysis.ats_score >= 70 %}
-                <span class="score-badge score-high">{{ job.analysis.ats_score }}%</span>
-                {% elif job.analysis.ats_score >= 45 %}
-                <span class="score-badge score-mid">{{ job.analysis.ats_score }}%</span>
-                {% else %}
-                <span class="score-badge score-low">{{ job.analysis.ats_score }}%</span>
-                {% endif %}
-                {% else %}
-                <span class="score-badge score-pending">—</span>
-                {% endif %}
+                <div class="job-card-header-right">
+                    {% if job.analysis.ats_score is not None %}
+                    {% if job.analysis.ats_score >= 70 %}
+                    <span class="score-badge score-high">{{ job.analysis.ats_score }}%</span>
+                    {% elif job.analysis.ats_score >= 45 %}
+                    <span class="score-badge score-mid">{{ job.analysis.ats_score }}%</span>
+                    {% else %}
+                    <span class="score-badge score-low">{{ job.analysis.ats_score }}%</span>
+                    {% endif %}
+                    {% else %}
+                    <span class="score-badge score-pending">—</span>
+                    {% endif %}
+                    <form method="post" action="{% url 'delete_job' job.id %}" class="delete-form"
+                        onsubmit="return confirm('Delete this job? This cannot be undone.')">
+                        {% csrf_token %}
+                        <button type="submit" class="delete-btn" title="Delete job">✕</button>
+                    </form>
+                </div>
             </div>
-            <div class="job-title">{{ job.job_title }}</div>
-            <div class="job-date">{{ job.created_at|date:"N j, Y" }}</div>
-            {% if job.analysis.resume_approved %}
-            <div class="job-tag">Resume ready</div>
-            {% elif job.analysis.is_complete %}
-            <div class="job-tag">Analysis done</div>
-            {% endif %}
-        </a>
+            <a href="{% url 'job_detail' job.id %}" class="job-card">
+                <div class="job-title">{{ job.job_title }}</div>
+                <div class="job-date">{{ job.created_at|date:"N j, Y" }}</div>
+                {% if job.analysis.resume_approved %}
+                <div class="job-tag">Resume ready</div>
+                {% elif job.analysis.is_complete %}
+                <div class="job-tag">Analysis done</div>
+                {% endif %}
+            </a>
+        </div>
         {% endfor %}
     </div>
     {% else %}
