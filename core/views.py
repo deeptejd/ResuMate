@@ -256,3 +256,25 @@ def export_md(request, job_id):
     response = HttpResponse(md_content, content_type='text/markdown')
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
     return response
+
+# TODO: add export to PDF and MD for cover letter as well
+def export_cover_letter(request, job_id):
+    job = get_object_or_404(JobApplication, id=job_id)
+    analysis = get_object_or_404(Analysis, job=job)
+
+    if not analysis.cover_letter:
+        messages.error(request, 'No cover letter to export.')
+        return redirect('job_detail', job_id=job_id)
+
+    filename = f"{job.company}_{job.job_title}_cover_letter.txt".replace(' ', '_')
+    response = HttpResponse(analysis.cover_letter, content_type='text/plain')
+    response['Content-Disposition'] = f'attachment; filename="{filename}"'
+    return response
+
+
+@require_POST
+def delete_job(request, job_id):
+    job = get_object_or_404(JobApplication, id=job_id)
+    job.delete()
+    messages.success(request, f'Job deleted.')
+    return redirect('dashboard')

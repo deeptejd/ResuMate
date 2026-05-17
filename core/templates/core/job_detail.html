@@ -67,17 +67,18 @@
     </div>
 
     <div class="tab-panels">
-        <div class="tab-panel tab-panel-active" id="panel-match">
-            <div class="tab-content" id="content-match">
-                {% if analysis and analysis.ats_match %}
-                <pre class="analysis-text">{{ analysis.ats_match }}</pre>
+        <div class="tab-panel" id="panel-cover">
+            <div class="tab-content" id="content-cover">
+                {% if analysis and analysis.cover_letter %}
+                <pre class="analysis-text">{{ analysis.cover_letter }}</pre>
                 {% else %}
-                <div class="tab-loading" id="loading-match">Waiting to start...</div>
+                <div class="tab-loading" id="loading-cover">Waiting...</div>
                 {% endif %}
             </div>
             {% if analysis and analysis.cover_letter %}
             <div class="copy-row">
-                <button class="btn btn-ghost btn-sm" onclick="copyText('content-match')">Copy</button>
+                <button class="btn btn-ghost btn-sm" onclick="copyText('content-cover')">Copy</button>
+                <a href="{% url 'export_cover_letter' job.id %}" class="btn btn-ghost btn-sm">Export .txt</a>
             </div>
             {% endif %}
         </div>

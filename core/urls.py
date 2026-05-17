@@ -13,4 +13,6 @@ urlpatterns = [
     path('jobs/<int:job_id>/resume/approve/', views.approve_resume, name='approve_resume'),
     path('jobs/<int:job_id>/export/pdf/', views.export_pdf, name='export_pdf'),
     path('jobs/<int:job_id>/export/md/', views.export_md, name='export_md'),
+    path('jobs/<int:job_id>/export/cover-letter/', views.export_cover_letter, name='export_cover_letter'),
+    path('jobs/<int:job_id>/delete/', views.delete_job, name='delete_job'),
 ]
