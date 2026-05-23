@@ -3,15 +3,7 @@ import textwrap
 
 
 def generate_markdown(job, analysis):
-    lines = []
-    lines.append(f"# Tailored Resume")
-    lines.append(f"")
-    lines.append(f"_Tailored for: {job.job_title} at {job.company}_")
-    lines.append(f"")
-    lines.append("---")
-    lines.append(f"")
-    lines.append(analysis.tailored_resume)
-    return "\n".join(lines)
+    return analysis.tailored_resume
 
 
 def clean_pdf_text(text):
@@ -40,20 +32,6 @@ def generate_pdf(job, analysis):
     pdf = FPDF()
     pdf.set_margins(20, 20, 20)
     pdf.add_page()
-
-    pdf.set_font("Helvetica", "B", 18)
-    pdf.cell(0, 10, clean_pdf_text("Tailored Resume"), new_x="LMARGIN", new_y="NEXT")
-
-    pdf.set_font("Helvetica", "I", 11)
-    pdf.set_text_color(100, 100, 100)
-    pdf.cell(0, 7, clean_pdf_text(f"Tailored for: {job.job_title} at {job.company}"), new_x="LMARGIN", new_y="NEXT")
-    pdf.set_text_color(0, 0, 0)
-
-    pdf.ln(4)
-    pdf.set_draw_color(200, 200, 200)
-    pdf.set_line_width(0.3)
-    pdf.line(20, pdf.get_y(), 190, pdf.get_y())
-    pdf.ln(6)
 
     content = analysis.tailored_resume
     lines = content.split("\n")
