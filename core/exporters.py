@@ -42,13 +42,13 @@ def generate_pdf(job, analysis):
 
         if cleaned.startswith("# "):
             pdf.set_font("Helvetica", "B", 16)
-            pdf.multi_cell(0, 9, cleaned[2:], new_x="LMARGIN", new_y="NEXT")
+            pdf.multi_cell(0, 9, cleaned[2:], new_x="LMARGIN", new_y="NEXT", markdown=True)
             pdf.ln(1)
 
         elif cleaned.startswith("## "):
             pdf.ln(3)
             pdf.set_font("Helvetica", "B", 12)
-            pdf.multi_cell(0, 8, cleaned[3:].upper(), new_x="LMARGIN", new_y="NEXT")
+            pdf.multi_cell(0, 8, cleaned[3:].upper(), new_x="LMARGIN", new_y="NEXT", markdown=True)
             pdf.set_draw_color(180, 180, 180)
             pdf.set_line_width(0.2)
             pdf.line(20, pdf.get_y(), 190, pdf.get_y())
@@ -56,17 +56,17 @@ def generate_pdf(job, analysis):
 
         elif cleaned.startswith("### "):
             pdf.set_font("Helvetica", "B", 11)
-            pdf.multi_cell(0, 7, cleaned[4:], new_x="LMARGIN", new_y="NEXT")
+            pdf.multi_cell(0, 7, cleaned[4:], new_x="LMARGIN", new_y="NEXT", markdown=True)
 
         elif cleaned.startswith("- ") or cleaned.startswith("* "):
             pdf.set_font("Helvetica", "", 10)
             bullet_text = "  -  " + cleaned[2:]
-            pdf.multi_cell(0, 6, bullet_text, new_x="LMARGIN", new_y="NEXT")
+            pdf.multi_cell(0, 6, bullet_text, new_x="LMARGIN", new_y="NEXT", markdown=True)
 
         elif cleaned.startswith("_") and cleaned.endswith("_"):
             pdf.set_font("Helvetica", "I", 10)
             pdf.set_text_color(80, 80, 80)
-            pdf.multi_cell(0, 6, cleaned.strip("_"), new_x="LMARGIN", new_y="NEXT")
+            pdf.multi_cell(0, 6, cleaned.strip("_"), new_x="LMARGIN", new_y="NEXT", markdown=True)
             pdf.set_text_color(0, 0, 0)
 
         elif cleaned == "" or cleaned == "---":
@@ -74,5 +74,5 @@ def generate_pdf(job, analysis):
 
         else:
             pdf.set_font("Helvetica", "", 10)
-            pdf.multi_cell(0, 6, cleaned, new_x="LMARGIN", new_y="NEXT")
+            pdf.multi_cell(0, 6, cleaned, new_x="LMARGIN", new_y="NEXT", markdown=True)
     return bytes(pdf.output())
