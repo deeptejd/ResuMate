@@ -42,7 +42,7 @@ def generate_pdf(job, analysis):
 
         if cleaned.startswith("# "):
             pdf.set_font("Helvetica", "B", 16)
-            pdf.multi_cell(0, 9, cleaned[2:], new_x="LMARGIN", new_y="NEXT", markdown=True)
+            pdf.multi_cell(0, 9, cleaned[2:], new_x="LMARGIN", new_y="NEXT", markdown=True, align="C")
             pdf.ln(1)
 
         elif cleaned.startswith("## "):
