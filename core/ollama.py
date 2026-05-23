@@ -70,6 +70,8 @@ def stream_prompt(prompt, model=None):
 def ats_match_prompt(resume_text, jd_text):
     return f"""You are an expert ATS (Applicant Tracking System) analyst. Use markdown formatting in your response — use **bold** for important terms, ## for section headers, and - for bullet points.
 
+IMPORTANT: You MUST refer to the user directly as "you" and "your" (e.g., "your resume", "your experience") rather than "the candidate" or "their". Address the user in a direct, personal tone.
+
 RESUME:
 {resume_text}
 
@@ -125,6 +127,8 @@ Write only the cover letter. No preamble. No explanation. No "here is your cover
 def jd_decode_prompt(jd_text):
     return f"""You are a brutally honest career advisor who has read thousands of job descriptions. Use markdown formatting — ## for section headers, **bold** for decoded phrases, and - for bullet points.
 
+IMPORTANT: You MUST refer to the user directly as "you" and "your" rather than "the candidate" or "their". Address the user in a direct, personal tone.
+
 JOB DESCRIPTION:
 {jd_text}
 
@@ -152,7 +156,9 @@ Be honest but not cynical. Some phrases mean exactly what they say."""
 
 
 def red_flags_prompt(jd_text):
-    return f"""You are a career advisor helping candidates spot warning signs in job descriptions. Use markdown formatting — ## for headers, **bold** for flagged phrases, and emoji indicators for severity.
+    return f"""You are a career advisor helping the user spot warning signs in job descriptions. Use markdown formatting — ## for headers, **bold** for flagged phrases, and emoji indicators for severity.
+
+IMPORTANT: You MUST refer to the user directly as "you" and "your" rather than "the candidate" or "their". Address the user in a direct, personal tone.
 
 JOB DESCRIPTION:
 {jd_text}
@@ -187,7 +193,7 @@ If there are genuinely no significant red flags say so clearly. Be calibrated, n
 
 
 def interview_prep_prompt(resume_text, jd_text):
-    return f"""You are an expert interview coach preparing a candidate for a specific role. Use markdown formatting — ## for question headers, **bold** for key points, and *italics* for tips.
+    return f"""You are an expert interview coach preparing the user for a specific role. Use markdown formatting — ## for question headers, **bold** for key points, and *italics* for tips.
 
 RESUME:
 {resume_text}
@@ -195,7 +201,9 @@ RESUME:
 JOB DESCRIPTION:
 {jd_text}
 
-Generate exactly 6 interview questions tailored to this specific role and candidate, using this structure:
+IMPORTANT: You MUST refer to the user directly as "you" and "your" (e.g., "your resume", "your experience") rather than "the candidate" or "their". Address the user in a direct, personal tone.
+
+Generate exactly 6 interview questions tailored to this specific role and to you, using this structure:
 
 ## Question 1
 **[The interview question]**
@@ -203,7 +211,7 @@ Generate exactly 6 interview questions tailored to this specific role and candid
 *Why they'll ask this:* [one sentence on what the interviewer is probing]
 
 **How to approach your answer:**
-[2-3 sentences on how to answer well, referencing their actual resume experience where relevant]
+[2-3 sentences on how to answer well, referencing your actual resume experience where relevant]
 
 ---
 
@@ -217,11 +225,11 @@ Generate exactly 6 interview questions tailored to this specific role and candid
 ---
 
 ## Wildcard ⚡
-**[One unexpected question they should prepare for]**
+**[One unexpected question you should prepare for]**
 
 *Why this might come up:* [brief explanation]
 
-Make every question specific to this role and this candidate. No generic questions."""
+Make every question specific to this role and to you. No generic questions."""
 
 
 def tailored_resume_prompt(resume_text, jd_text, ats_analysis):
