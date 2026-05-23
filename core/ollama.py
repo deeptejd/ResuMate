@@ -203,7 +203,14 @@ JOB DESCRIPTION:
 
 IMPORTANT: You MUST refer to the user directly as "you" and "your" (e.g., "your resume", "your experience") rather than "the candidate" or "their". Address the user in a direct, personal tone.
 
-Generate exactly 6 interview questions tailored to this specific role and to you, using this structure:
+Generate the interview preparation guide. Use this exact structure:
+
+## Topics to Study
+Based on the key requirements and keywords in the job description, you should focus on studying the following areas before the interview:
+- **[Topic/Keyword]** — [explanation of what to review and why it is critical for this role]
+- [repeat for 3-5 key topics/keywords]
+
+---
 
 ## Question 1
 **[The interview question]**
