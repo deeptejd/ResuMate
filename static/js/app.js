@@ -215,3 +215,192 @@ function initJobDetail() {
     startAnalysisStream(jobId);
   }
 }
+
+function initDashboardFilters() {
+  var searchInput = document.getElementById('jobSearch');
+  var clearSearchBtn = document.getElementById('clearSearch');
+  var companySelect = document.getElementById('filterCompany');
+  var scoreSelect = document.getElementById('filterScore');
+  var statusSelect = document.getElementById('filterStatus');
+  var sortSelect = document.getElementById('sortJobs');
+  var resetBtn = document.getElementById('btnResetFilters');
+  var resetLnk = document.getElementById('lnkResetFilters');
+  var jobsGrid = document.getElementById('jobsGrid');
+  var noJobsFallback = document.getElementById('noMatchingJobs');
+
+  if (!jobsGrid) return;
+
+  var jobCards = Array.from(document.querySelectorAll('.job-card-wrap'));
+  if (jobCards.length === 0) return;
+
+  // Populate company options
+  var companies = new Set();
+  jobCards.forEach(function(card) {
+    var comp = card.dataset.company;
+    if (comp) {
+      companies.add(comp.trim());
+    }
+  });
+
+  var sortedCompanies = Array.from(companies).sort(function(a, b) {
+    return a.localeCompare(b, undefined, { sensitivity: 'base' });
+  });
+
+  sortedCompanies.forEach(function(comp) {
+    var opt = document.createElement('option');
+    opt.value = comp;
+    opt.textContent = comp;
+    companySelect.appendChild(opt);
+  });
+
+  function applyFiltersAndSort() {
+    var query = searchInput.value.trim().toLowerCase();
+    var selectedCompany = companySelect.value;
+    var selectedScore = scoreSelect.value;
+    var selectedStatus = statusSelect.value;
+    var sortBy = sortSelect.value;
+
+    // Search bar clear button
+    if (clearSearchBtn) {
+      clearSearchBtn.style.display = query ? 'block' : 'none';
+    }
+
+    // Reset button visibility
+    var isFiltered = query || selectedCompany || selectedScore || selectedStatus;
+    if (resetBtn) {
+      resetBtn.style.display = isFiltered ? 'inline-flex' : 'none';
+    }
+
+    // Filter job cards
+    jobCards.forEach(function(card) {
+      var title = (card.dataset.title || '').toLowerCase();
+      var company = (card.dataset.company || '').toLowerCase();
+      var jd = (card.dataset.jd || '').toLowerCase();
+      var score = parseInt(card.dataset.score || '-1', 10);
+      var isReady = card.dataset.ready === 'true';
+      var isComplete = card.dataset.complete === 'true';
+
+      var matchesSearch = !query || title.indexOf(query) !== -1 || company.indexOf(query) !== -1 || jd.indexOf(query) !== -1;
+      var matchesCompany = !selectedCompany || card.dataset.company === selectedCompany;
+
+      var matchesScore = true;
+      if (selectedScore === 'high') {
+        matchesScore = score >= 70;
+      } else if (selectedScore === 'mid') {
+        matchesScore = score >= 45 && score < 70;
+      } else if (selectedScore === 'low') {
+        matchesScore = score >= 0 && score < 45;
+      } else if (selectedScore === 'pending') {
+        matchesScore = score === -1;
+      }
+
+      var matchesStatus = true;
+      if (selectedStatus === 'ready') {
+        matchesStatus = isReady;
+      } else if (selectedStatus === 'complete') {
+        matchesStatus = isComplete;
+      } else if (selectedStatus === 'pending') {
+        matchesStatus = !isComplete && !isReady;
+      }
+
+      var isVisible = matchesSearch && matchesCompany && matchesScore && matchesStatus;
+
+      if (isVisible) {
+        if (card.style.display === 'none') {
+          card.style.display = '';
+          // Trigger CSS reflow to restart the animation
+          card.classList.remove('fade-in');
+          void card.offsetWidth;
+          card.classList.add('fade-in');
+        } else if (!card.classList.contains('fade-in')) {
+          card.classList.add('fade-in');
+        }
+      } else {
+        card.style.display = 'none';
+        card.classList.remove('fade-in');
+      }
+    });
+
+    // Sort job cards
+    var sortedCards = jobCards.slice().sort(function(a, b) {
+      if (sortBy === 'date-desc') {
+        return parseFloat(b.dataset.created) - parseFloat(a.dataset.created);
+      } else if (sortBy === 'date-asc') {
+        return parseFloat(a.dataset.created) - parseFloat(b.dataset.created);
+      } else if (sortBy === 'score-desc') {
+        var scoreA = parseInt(a.dataset.score || '-1', 10);
+        var scoreB = parseInt(b.dataset.score || '-1', 10);
+        return scoreB - scoreA;
+      } else if (sortBy === 'score-asc') {
+        var scoreA = parseInt(a.dataset.score || '-1', 10);
+        var scoreB = parseInt(b.dataset.score || '-1', 10);
+        // Put pending scores (-1) at the end
+        var valA = scoreA === -1 ? 999999 : scoreA;
+        var valB = scoreB === -1 ? 999999 : scoreB;
+        return valA - valB;
+      } else if (sortBy === 'company-asc') {
+        var compA = a.dataset.company || '';
+        var compB = b.dataset.company || '';
+        return compA.localeCompare(compB, undefined, { sensitivity: 'base' });
+      } else if (sortBy === 'title-asc') {
+        var titleA = a.dataset.title || '';
+        var titleB = b.dataset.title || '';
+        return titleA.localeCompare(titleB, undefined, { sensitivity: 'base' });
+      }
+      return 0;
+    });
+
+    sortedCards.forEach(function(card) {
+      jobsGrid.appendChild(card);
+    });
+
+    // Show fallback if no visible results
+    var visibleCards = jobCards.filter(function(card) {
+      return card.style.display !== 'none';
+    });
+
+    if (noJobsFallback) {
+      noJobsFallback.style.display = visibleCards.length === 0 ? 'block' : 'none';
+    }
+  }
+
+  function resetAll() {
+    searchInput.value = '';
+    companySelect.value = '';
+    scoreSelect.value = '';
+    statusSelect.value = '';
+    sortSelect.value = 'date-desc';
+    applyFiltersAndSort();
+  }
+
+  // Event Listeners
+  searchInput.addEventListener('input', applyFiltersAndSort);
+  companySelect.addEventListener('change', applyFiltersAndSort);
+  scoreSelect.addEventListener('change', applyFiltersAndSort);
+  statusSelect.addEventListener('change', applyFiltersAndSort);
+  sortSelect.addEventListener('change', applyFiltersAndSort);
+
+  if (clearSearchBtn) {
+    clearSearchBtn.addEventListener('click', function() {
+      searchInput.value = '';
+      applyFiltersAndSort();
+    });
+  }
+
+  if (resetBtn) {
+    resetBtn.addEventListener('click', resetAll);
+  }
+
+  if (resetLnk) {
+    resetLnk.addEventListener('click', function(e) {
+      e.preventDefault();
+      resetAll();
+    });
+  }
+
+  // Initial call to sort cards and establish state
+  applyFiltersAndSort();
+}
+
+// Initialize filters
+initDashboardFilters();

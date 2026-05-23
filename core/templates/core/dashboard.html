@@ -96,9 +96,65 @@
     </div>
 
     {% if jobs %}
-    <div class="jobs-grid">
+    <!-- Filter and Sort Controls -->
+    <div class="filter-bar">
+        <div class="filter-search-wrapper">
+            <svg class="search-icon" width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                <circle cx="7" cy="7" r="4.5" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <input type="text" id="jobSearch" placeholder="Search title, company, description..." class="filter-input" />
+            <button type="button" id="clearSearch" class="clear-search-btn" title="Clear search" aria-label="Clear search" style="display: none;">&times;</button>
+        </div>
+        <div class="filter-group">
+            <div class="select-wrapper">
+                <select id="filterCompany" class="filter-select" aria-label="Filter by company">
+                    <option value="">All Companies</option>
+                </select>
+            </div>
+            <div class="select-wrapper">
+                <select id="filterScore" class="filter-select" aria-label="Filter by ATS score">
+                    <option value="">All Scores</option>
+                    <option value="high">Good Match (70%+)</option>
+                    <option value="mid">Average Match (45%–69%)</option>
+                    <option value="low">Poor Match (<45%)</option>
+                    <option value="pending">Pending Analysis</option>
+                </select>
+            </div>
+            <div class="select-wrapper">
+                <select id="filterStatus" class="filter-select" aria-label="Filter by status">
+                    <option value="">All Statuses</option>
+                    <option value="ready">Resume Ready</option>
+                    <option value="complete">Analysis Done</option>
+                    <option value="pending">Pending Analysis</option>
+                </select>
+            </div>
+            <div class="select-wrapper">
+                <select id="sortJobs" class="filter-select" aria-label="Sort by">
+                    <option value="date-desc">Newest First</option>
+                    <option value="date-asc">Oldest First</option>
+                    <option value="score-desc">ATS Score: High to Low</option>
+                    <option value="score-asc">ATS Score: Low to High</option>
+                    <option value="company-asc">Company: A to Z</option>
+                    <option value="title-asc">Job Title: A to Z</option>
+                </select>
+            </div>
+            <button type="button" id="btnResetFilters" class="btn btn-ghost btn-sm" style="display: none;">
+                Clear filters
+            </button>
+        </div>
+    </div>
+
+    <div class="jobs-grid" id="jobsGrid">
         {% for job in jobs %}
-        <div class="job-card-wrap">
+        <div class="job-card-wrap"
+             data-title="{{ job.job_title|lower }}"
+             data-company="{{ job.company }}"
+             data-score="{% if job.analysis.ats_score is not None %}{{ job.analysis.ats_score }}{% else %}-1{% endif %}"
+             data-created="{{ job.created_at.timestamp }}"
+             data-ready="{% if job.analysis.resume_approved %}true{% else %}false{% endif %}"
+             data-complete="{% if job.analysis.is_complete %}true{% else %}false{% endif %}"
+             data-jd="{{ job.jd_text|lower }}">
             <div class="job-card-header">
                 <div class="job-company">{{ job.company }}</div>
                 <div class="job-card-header-right">
@@ -136,6 +192,17 @@
             </a>
         </div>
         {% endfor %}
+    </div>
+
+    <!-- No results fallback empty state -->
+    <div id="noMatchingJobs" class="jobs-empty" style="display: none; margin-top: 16px;">
+        <div class="jobs-empty-icon">
+            <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+                <rect x="6" y="8" width="20" height="18" rx="2" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M11 14h10M11 18h7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+        </div>
+        <p>No jobs match your current filters. <a href="#" id="lnkResetFilters">Reset all filters</a>.</p>
     </div>
     {% else %}
     <div class="jobs-empty">

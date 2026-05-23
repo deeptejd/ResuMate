@@ -1493,3 +1493,185 @@ pre {
     white-space: pre-wrap;
     font-family: monospace;
 }
+
+/* FILTER BAR */
+.filter-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 14px 18px;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow-sm);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.filter-search-wrapper {
+    position: relative;
+    flex: 1 1 260px;
+    display: flex;
+    align-items: center;
+}
+
+.filter-search-wrapper .search-icon {
+    position: absolute;
+    left: 14px;
+    color: var(--text-3);
+    pointer-events: none;
+    transition: color 0.2s var(--ease);
+}
+
+.filter-search-wrapper:focus-within .search-icon {
+    color: var(--accent);
+}
+
+.filter-input {
+    width: 100%;
+    padding: 9px 38px 9px 38px;
+    background: var(--bg-raised);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    color: var(--text);
+    font-size: 13.5px;
+    font-family: inherit;
+    transition: border-color 0.2s var(--ease), box-shadow 0.2s var(--ease), background-color 0.2s var(--ease);
+}
+
+.filter-input::placeholder {
+    color: var(--text-3);
+}
+
+.filter-input:hover {
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.filter-input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 2px var(--accent-glow);
+    outline: none;
+    background-color: var(--bg-surface);
+}
+
+.clear-search-btn {
+    position: absolute;
+    right: 12px;
+    background: transparent;
+    border: none;
+    color: var(--text-3);
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 0 4px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    transition: color 0.15s var(--ease), background-color 0.15s var(--ease);
+}
+
+.clear-search-btn:hover {
+    color: var(--text);
+    background-color: rgba(255, 255, 255, 0.08);
+}
+
+.filter-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    flex: 2 1 auto;
+    justify-content: flex-end;
+}
+
+.select-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.select-wrapper::after {
+    content: "";
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 5px solid var(--text-3);
+    pointer-events: none;
+    transition: border-color 0.15s var(--ease);
+}
+
+.select-wrapper:hover::after {
+    border-top-color: var(--text-2);
+}
+
+.filter-select {
+    appearance: none;
+    -webkit-appearance: none;
+    padding: 9px 34px 9px 14px;
+    background: var(--bg-raised);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius);
+    color: var(--text-2);
+    font-size: 13px;
+    font-family: inherit;
+    cursor: pointer;
+    transition: border-color 0.2s var(--ease), color 0.2s var(--ease);
+}
+
+.filter-select:hover {
+    color: var(--text);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+.filter-select:focus {
+    border-color: var(--accent);
+    color: var(--text);
+    outline: none;
+}
+
+@media (max-width: 860px) {
+    .filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .filter-search-wrapper {
+        flex: 1 1 auto;
+    }
+    .filter-group {
+        justify-content: flex-start;
+        width: 100%;
+    }
+    .filter-select, .select-wrapper {
+        flex-grow: 1;
+    }
+    .filter-select {
+        width: 100%;
+    }
+}
+
+/* ANIMATION FOR DYNAMIC CARD TOGGLE */
+@keyframes cardFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(12px) scale(0.98);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.job-card-wrap.fade-in {
+    animation: cardFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
