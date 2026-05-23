@@ -192,6 +192,232 @@ function approveResume(jobId) {
   });
 }
 
+function formatAnalysisHtml(tabKey) {
+  var contentDiv = document.getElementById('content-' + tabKey);
+  if (!contentDiv) return;
+
+  var rendered = contentDiv.querySelector('.analysis-rendered');
+  if (!rendered) return;
+
+  if (rendered.dataset.formatted === 'true') return;
+
+  if (tabKey === 'match') {
+    var headings = Array.from(rendered.querySelectorAll('h2, h3'));
+    headings.forEach(function(heading) {
+      var text = heading.textContent.toLowerCase();
+      var isFound = text.indexOf('found') !== -1 || text.indexOf('✓') !== -1;
+      var isMissing = text.indexOf('missing') !== -1 || text.indexOf('✗') !== -1;
+
+      if (isFound || isMissing) {
+        var nextUl = heading.nextElementSibling;
+        if (nextUl && nextUl.tagName === 'UL') {
+          nextUl.classList.add('chips-list');
+          var lis = Array.from(nextUl.querySelectorAll('li'));
+          lis.forEach(function(li) {
+            var strong = li.querySelector('strong');
+            if (strong) {
+              var term = strong.textContent.trim();
+              var restText = li.innerHTML.replace(strong.outerHTML, '').replace(/^[\s—\-–:]+/, '');
+              
+              var chipSpan = document.createElement('span');
+              chipSpan.className = 'keyword-chip ' + (isFound ? 'keyword-chip-found' : 'keyword-chip-missing');
+              chipSpan.textContent = term;
+
+              var contextSpan = document.createElement('span');
+              contextSpan.className = 'keyword-context';
+              contextSpan.innerHTML = restText;
+
+              li.innerHTML = '';
+              li.appendChild(chipSpan);
+              if (restText.trim()) {
+                li.appendChild(contextSpan);
+              }
+            }
+          });
+        }
+      }
+    });
+  } else if (tabKey === 'decode') {
+    var headings = Array.from(rendered.querySelectorAll('h2, h3'));
+    headings.forEach(function(heading) {
+      var text = heading.textContent.toLowerCase();
+      if (text.indexOf('decoded') !== -1) {
+        var nextUl = heading.nextElementSibling;
+        if (nextUl && nextUl.tagName === 'UL') {
+          var lis = Array.from(nextUl.querySelectorAll('li'));
+          nextUl.style.listStyleType = 'none';
+          nextUl.style.padding = '0';
+          nextUl.style.margin = '1rem 0';
+          
+          lis.forEach(function(li) {
+            li.className = 'phrase-card';
+            var strong = li.querySelector('strong');
+            if (strong) {
+              var phrase = strong.textContent.trim();
+              var html = li.innerHTML;
+              var rest = html.replace(strong.outerHTML, '');
+              var cleanRest = rest.replace(/^[\s&rarr;→\-–—]+/, '').trim();
+              
+              var phraseSpan = document.createElement('span');
+              phraseSpan.className = 'phrase-term';
+              phraseSpan.textContent = phrase;
+              
+              var arrowSpan = document.createElement('span');
+              arrowSpan.className = 'phrase-arrow';
+              arrowSpan.innerHTML = ' &rarr; ';
+              
+              var meaningSpan = document.createElement('span');
+              meaningSpan.className = 'phrase-meaning';
+              meaningSpan.innerHTML = cleanRest;
+              
+              li.innerHTML = '';
+              li.appendChild(phraseSpan);
+              li.appendChild(arrowSpan);
+              li.appendChild(meaningSpan);
+            }
+          });
+        }
+      }
+    });
+  } else if (tabKey === 'prep') {
+    var elements = Array.from(rendered.children);
+    var accordionContainer = document.createElement('div');
+    accordionContainer.className = 'accordions-container';
+
+    var currentItem = null;
+    var currentHeader = null;
+    var currentBody = null;
+    
+    var studyTopicsHeading = null;
+    var studyTopicsList = null;
+
+    elements.forEach(function(el) {
+      var text = el.textContent.toLowerCase();
+      var isStudyTopics = text.indexOf('topics to study') !== -1;
+      
+      if (isStudyTopics) {
+        studyTopicsHeading = el;
+        var next = el.nextElementSibling;
+        if (next && next.tagName === 'UL') {
+          studyTopicsList = next;
+        }
+      }
+    });
+
+    if (studyTopicsList) {
+      studyTopicsList.classList.add('chips-list');
+      var studyLis = Array.from(studyTopicsList.querySelectorAll('li'));
+      studyLis.forEach(function(li) {
+        var strong = li.querySelector('strong');
+        if (strong) {
+          var term = strong.textContent.trim();
+          var restText = li.innerHTML.replace(strong.outerHTML, '').replace(/^[\s—\-–:]+/, '');
+          
+          var chipSpan = document.createElement('span');
+          chipSpan.className = 'keyword-chip keyword-chip-found';
+          chipSpan.style.borderColor = 'var(--accent-strong)';
+          chipSpan.style.color = 'var(--accent)';
+          chipSpan.style.backgroundColor = 'var(--accent-dim)';
+          chipSpan.textContent = term;
+
+          var contextSpan = document.createElement('span');
+          contextSpan.className = 'keyword-context';
+          contextSpan.innerHTML = restText;
+
+          li.innerHTML = '';
+          li.appendChild(chipSpan);
+          if (restText.trim()) {
+            li.appendChild(contextSpan);
+          }
+        }
+      });
+    }
+
+    var elementsToGroup = [];
+    var grouping = false;
+
+    elements.forEach(function(el) {
+      var tagName = el.tagName;
+      var text = el.textContent.toLowerCase();
+      var isQuestionHeader = tagName === 'H2' && (text.indexOf('question') !== -1 || text.indexOf('wildcard') !== -1);
+      
+      if (isQuestionHeader) {
+        grouping = true;
+        if (currentItem) {
+          currentItem.appendChild(currentBody);
+          accordionContainer.appendChild(currentItem);
+        }
+        
+        currentItem = document.createElement('div');
+        currentItem.className = 'accordion-item';
+        
+        currentHeader = document.createElement('div');
+        currentHeader.className = 'accordion-header';
+        
+        var titleSpan = document.createElement('span');
+        titleSpan.textContent = el.textContent.replace('⚡', '').trim();
+        if (text.indexOf('wildcard') !== -1) {
+          titleSpan.innerHTML = '⚡ ' + titleSpan.textContent;
+        }
+        currentHeader.appendChild(titleSpan);
+        
+        var arrowSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        arrowSvg.setAttribute('class', 'accordion-trigger-icon');
+        arrowSvg.setAttribute('viewBox', '0 0 24 24');
+        arrowSvg.setAttribute('fill', 'none');
+        arrowSvg.setAttribute('stroke', 'currentColor');
+        arrowSvg.setAttribute('stroke-width', '2');
+        arrowSvg.setAttribute('stroke-linecap', 'round');
+        arrowSvg.setAttribute('stroke-linejoin', 'round');
+        arrowSvg.innerHTML = '<polyline points="6 9 12 15 18 9"></polyline>';
+        currentHeader.appendChild(arrowSvg);
+        
+        currentItem.appendChild(currentHeader);
+        
+        currentBody = document.createElement('div');
+        currentBody.className = 'accordion-content';
+        
+        (function(item, header) {
+          header.addEventListener('click', function() {
+            var isActive = item.classList.contains('active');
+            accordionContainer.querySelectorAll('.accordion-item').forEach(function(it) {
+              it.classList.remove('active');
+            });
+            if (!isActive) {
+              item.classList.add('active');
+            }
+          });
+        })(currentItem, currentHeader);
+
+        elementsToGroup.push(el);
+      } else if (grouping) {
+        if (el.tagName === 'HR') {
+          elementsToGroup.push(el);
+        } else {
+          currentBody.appendChild(el.cloneNode(true));
+          elementsToGroup.push(el);
+        }
+      }
+    });
+
+    if (currentItem) {
+      currentItem.appendChild(currentBody);
+      accordionContainer.appendChild(currentItem);
+    }
+
+    if (grouping) {
+      elementsToGroup.forEach(function(el) {
+        if (el.parentNode) {
+          el.parentNode.removeChild(el);
+        }
+      });
+      rendered.appendChild(accordionContainer);
+    }
+  }
+
+  rendered.dataset.formatted = 'true';
+}
+
 function initJobDetail() {
   var needsEl = document.getElementById('needsAnalysis');
   var jobIdEl = document.getElementById('jobId');
@@ -205,8 +431,9 @@ function initJobDetail() {
     document.querySelectorAll('.tab-dot').forEach(function(dot) {
       var id = dot.id.replace('dot-', '');
       var content = document.getElementById('content-' + id);
-      if (content && content.querySelector('.analysis-text')) {
+      if (content && content.querySelector('.analysis-rendered')) {
         dot.classList.add('dot-active');
+        formatAnalysisHtml(id);
       }
     });
   }
