@@ -304,8 +304,11 @@ def export_cover_letter(request, job_id):
         messages.error(request, 'No cover letter to export.')
         return redirect('job_detail', job_id=job_id)
 
-    filename = f"{job.company}_{job.job_title}_cover_letter.txt".replace(' ', '_')
-    response = HttpResponse(analysis.cover_letter, content_type='text/plain')
+    from .exporters import generate_cover_letter_pdf
+    pdf_bytes = generate_cover_letter_pdf(job, analysis)
+
+    filename = f"{job.company}_{job.job_title}_cover_letter.pdf".replace(' ', '_')
+    response = HttpResponse(pdf_bytes, content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="{filename}"'
     return response
 

@@ -76,3 +76,29 @@ def generate_pdf(job, analysis):
             pdf.set_font("Helvetica", "", 10)
             pdf.multi_cell(0, 6, cleaned, new_x="LMARGIN", new_y="NEXT", markdown=True)
     return bytes(pdf.output())
+
+
+def generate_cover_letter_pdf(job, analysis):
+    pdf = FPDF()
+    pdf.set_margins(20, 20, 20)
+    pdf.add_page()
+
+    content = analysis.cover_letter
+    lines = content.split("\n")
+
+    # Add a top header for the cover letter
+    pdf.set_font("Helvetica", "B", 14)
+    pdf.multi_cell(0, 9, clean_pdf_text(f"Cover Letter for {job.job_title} at {job.company}"), new_x="LMARGIN", new_y="NEXT", align="C")
+    pdf.ln(8)
+
+    for line in lines:
+        stripped = line.strip()
+        cleaned = clean_pdf_text(stripped)
+        if cleaned == "" or cleaned == "---":
+            pdf.ln(4)
+        else:
+            pdf.set_font("Helvetica", "", 10)
+            pdf.multi_cell(0, 6, cleaned, new_x="LMARGIN", new_y="NEXT", markdown=True)
+            pdf.ln(2)
+
+    return bytes(pdf.output())

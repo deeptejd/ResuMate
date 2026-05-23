@@ -105,7 +105,7 @@
             {% if analysis and analysis.cover_letter %}
             <div class="copy-row">
                 <button class="btn btn-ghost btn-sm" onclick="copyText('content-cover')">Copy</button>
-                <a href="{% url 'export_cover_letter' job.id %}" class="btn btn-ghost btn-sm">Export .txt</a>
+                <a href="{% url 'export_cover_letter' job.id %}" class="btn btn-ghost btn-sm">Export PDF</a>
             </div>
             {% endif %}
         </div>
@@ -163,7 +163,6 @@
         </div>
         <div class="export-actions">
             <a href="{% url 'export_pdf' job.id %}" class="btn btn-primary">Export PDF</a>
-            <a href="{% url 'export_md' job.id %}" class="btn btn-ghost">Export Markdown</a>
             <button class="btn btn-ghost" onclick="startResumeGeneration()">Regenerate</button>
         </div>
     </div>

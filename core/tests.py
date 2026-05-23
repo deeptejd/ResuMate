@@ -27,3 +27,20 @@ class OllamaPromptTestCase(TestCase):
         self.assertIn("Topics to Study", prompt)
         self.assertIn("Based on the key requirements and keywords in the job description", prompt)
 
+class ExportCoverLetterTestCase(TestCase):
+    def test_export_cover_letter_pdf(self):
+        job = JobApplication.objects.create(
+            job_title="Writer",
+            company="Medium",
+            jd_text="Write stories..."
+        )
+        # Create Analysis with cover letter content
+        from .models import Analysis
+        Analysis.objects.create(
+            job=job,
+            cover_letter="This is a test cover letter content."
+        )
+        response = self.client.get(reverse('export_cover_letter', args=[job.id]))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'application/pdf')
+
