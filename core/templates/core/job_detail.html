@@ -159,7 +159,7 @@
     {% if analysis and analysis.resume_approved and analysis.tailored_resume %}
     <div id="resumeApproved">
         <div class="resume-preview">
-            <pre class="analysis-text resume-text">{{ analysis.tailored_resume }}</pre>
+            <div class="analysis-rendered resume-text">{{ analysis.tailored_resume|render_markdown }}</div>
         </div>
         <div class="export-actions">
             <a href="{% url 'export_pdf' job.id %}" class="btn btn-primary">Export PDF</a>
@@ -171,7 +171,7 @@
     <div id="resumePreview">
         <p class="preview-note">Review the rewritten resume below. Approve it to unlock exports.</p>
         <div class="resume-preview">
-            <pre class="analysis-text resume-text" id="resumePreviewText">{{ analysis.tailored_resume }}</pre>
+            <div class="analysis-rendered resume-text" id="resumePreviewText">{{ analysis.tailored_resume|render_markdown }}</div>
         </div>
         <div class="preview-actions">
             <button class="btn btn-primary" onclick="approveResume({{ job.id }})">Approve and save</button>
