@@ -3,7 +3,7 @@
 
 **A locally running resume tailoring tool powered by the E2B model from the Gemma 4 family of open weights.** Upload your resume once, paste any job description, and get a complete analysis which includes — ATS match score, a cover letter, job description decoder, interview prep, and a tailored rewritten resume. Everything runs on your machine using Gemma 4 via Ollama!
 
-Read more about the features, why I chose the Gemma 4 E2B model and more here: [DEV/ResuMate]()
+Read more about the features, why I chose the Gemma 4 E2B model and more here: [DEV/ResuMate](https://dev.to/deeptej/i-built-resumate-a-100-private-local-ai-resume-optimizer-with-google-gemma-4-699)
 
 ---
 
