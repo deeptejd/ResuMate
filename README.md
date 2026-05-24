@@ -1,5 +1,6 @@
 # ResuMate
-![ResuMate](./static/images/resumate-readme-header-image.png)
+
+![ResuMate](https://github.com/user-attachments/assets/2b70b353-ffca-4739-83b0-9c5b1ec6b7d2)
 
 **A locally running resume tailoring tool powered by the E2B model from the Gemma 4 family of open weights.** Upload your resume once, paste any job description, and get a complete analysis which includes — ATS match score, a cover letter, job description decoder, interview prep, and a tailored rewritten resume. Everything runs on your machine using Gemma 4 via Ollama!
 
