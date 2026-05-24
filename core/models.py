@@ -44,7 +44,6 @@ class Analysis(models.Model):
     ats_match = models.TextField(blank=True, default='')
     cover_letter = models.TextField(blank=True, default='')
     jd_decode = models.TextField(blank=True, default='')
-    red_flags = models.TextField(blank=True, default='')
     interview_prep = models.TextField(blank=True, default='')
     tailored_resume = models.TextField(blank=True, default='')
     resume_approved = models.BooleanField(default=False)
@@ -59,6 +58,5 @@ class Analysis(models.Model):
             self.ats_match,
             self.cover_letter,
             self.jd_decode,
-            self.red_flags,
             self.interview_prep,
         ])

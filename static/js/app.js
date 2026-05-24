@@ -45,17 +45,15 @@ function toggleUpdateJd() {
 
 var tabProgress = {
   match:  { pct: 0,  label: 'Analysing keyword match...'    },
-  cover:  { pct: 20, label: 'Writing cover letter...'       },
-  decode: { pct: 40, label: 'Decoding job description...'   },
-  flags:  { pct: 60, label: 'Scanning for red flags...'     },
-  prep:   { pct: 80, label: 'Building interview prep...'    },
+  cover:  { pct: 25, label: 'Writing cover letter...'       },
+  decode: { pct: 50, label: 'Decoding job description...'   },
+  prep:   { pct: 75, label: 'Building interview prep...'    },
 };
 
 var tabFieldMap = {
   match:  'content-match',
   cover:  'content-cover',
   decode: 'content-decode',
-  flags:  'content-flags',
   prep:   'content-prep',
 };
 

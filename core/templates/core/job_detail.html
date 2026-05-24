@@ -73,9 +73,7 @@
         <button class="tab" onclick="switchTab('decode')" id="tab-btn-decode" role="tab">
             <span class="tab-dot" id="dot-decode"></span> JD Decoder
         </button>
-        <button class="tab" onclick="switchTab('flags')" id="tab-btn-flags" role="tab">
-            <span class="tab-dot" id="dot-flags"></span> Red Flags
-        </button>
+
         <button class="tab" onclick="switchTab('prep')" id="tab-btn-prep" role="tab">
             <span class="tab-dot" id="dot-prep"></span> Interview Prep
         </button>
@@ -118,15 +116,7 @@
             </div>
         </div>
 
-        <div class="tab-panel" id="panel-flags">
-            <div class="tab-content" id="content-flags">
-                {% if analysis and analysis.red_flags %}
-                <div class="analysis-rendered">{{ analysis.red_flags|render_markdown }}</div>
-                {% else %}
-                <div class="tab-loading" id="loading-flags">Scanning for red flags...</div>
-                {% endif %}
-            </div>
-        </div>
+
 
         <div class="tab-panel" id="panel-prep">
             <div class="tab-content" id="content-prep">

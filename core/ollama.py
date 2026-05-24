@@ -161,41 +161,7 @@ Use this exact format:
 Be honest but not cynical. Some phrases mean exactly what they say."""
 
 
-def red_flags_prompt(jd_text):
-    return f"""You are a career advisor helping the user spot warning signs in job descriptions. Use markdown formatting — ## for headers, **bold** for flagged phrases, and emoji indicators for severity.
 
-IMPORTANT: You MUST refer to the user directly as "you" and "your" rather than "the candidate" or "their". Address the user in a direct, personal tone.
-
-JOB DESCRIPTION:
-{jd_text}
-
-Analyse this JD for red flags. Use this exact format:
-
-## Overall Verdict
-**[🟢 GREEN / 🟡 YELLOW / 🔴 RED]** — [one sentence overall assessment]
-
-## Flags Found
-
-### 🔴 High Severity
-[Include this section only if high severity flags exist]
-- **"[exact phrase from JD]"**
-  - *What it signals:* [honest explanation of what this typically means]
-  - *Ask this in the interview:* "[specific question to probe this]"
-
-### 🟡 Medium Severity
-[Include this section only if medium severity flags exist]
-- **"[exact phrase from JD]"**
-  - *What it signals:* [explanation]
-  - *Ask this in the interview:* "[question]"
-
-### 🟢 Low Severity / Worth Noting
-[Include this section only if low severity flags exist]
-- **"[exact phrase from JD]"**
-  - *What it signals:* [explanation]
-  - *Ask this in the interview:* "[question]"
-[continue for 3 to 5 flags total]
-
-If there are genuinely no significant red flags say so clearly. Be calibrated, not everything is a problem."""
 
 
 def interview_prep_prompt(resume_text, jd_text):

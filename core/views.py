@@ -149,7 +149,6 @@ def stream_analysis(request, job_id):
         ('match',  'ats_match',      ol.ats_match_prompt(job.resume.raw_text, job.jd_text)),
         ('cover',  'cover_letter',   ol.cover_letter_prompt(job.resume.raw_text, job.jd_text)),
         ('decode', 'jd_decode',      ol.jd_decode_prompt(job.jd_text)),
-        ('flags',  'red_flags',      ol.red_flags_prompt(job.jd_text)),
         ('prep',   'interview_prep', ol.interview_prep_prompt(job.resume.raw_text, job.jd_text)),
     ]
 
@@ -249,7 +248,6 @@ def update_jd(request, job_id):
         analysis.ats_match = ''
         analysis.cover_letter = ''
         analysis.jd_decode = ''
-        analysis.red_flags = ''
         analysis.interview_prep = ''
         analysis.tailored_resume = ''
         analysis.resume_approved = False
