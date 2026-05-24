@@ -15,4 +15,5 @@ urlpatterns = [
     path('jobs/<int:job_id>/export/md/', views.export_md, name='export_md'),
     path('jobs/<int:job_id>/export/cover-letter/', views.export_cover_letter, name='export_cover_letter'),
     path('jobs/<int:job_id>/delete/', views.delete_job, name='delete_job'),
+    path('api/ollama-status/', views.ollama_status_api, name='ollama_status_api'),
 ]

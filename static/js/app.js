@@ -361,16 +361,10 @@ function formatAnalysisHtml(tabKey) {
         }
         currentHeader.appendChild(titleSpan);
         
-        var arrowSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-        arrowSvg.setAttribute('class', 'accordion-trigger-icon');
-        arrowSvg.setAttribute('viewBox', '0 0 24 24');
-        arrowSvg.setAttribute('fill', 'none');
-        arrowSvg.setAttribute('stroke', 'currentColor');
-        arrowSvg.setAttribute('stroke-width', '2');
-        arrowSvg.setAttribute('stroke-linecap', 'round');
-        arrowSvg.setAttribute('stroke-linejoin', 'round');
-        arrowSvg.innerHTML = '<polyline points="6 9 12 15 18 9"></polyline>';
-        currentHeader.appendChild(arrowSvg);
+        var arrowIcon = document.createElement('span');
+        arrowIcon.className = 'material-symbols-outlined accordion-trigger-icon';
+        arrowIcon.textContent = 'expand_more';
+        currentHeader.appendChild(arrowIcon);
         
         currentItem.appendChild(currentHeader);
         
@@ -629,5 +623,52 @@ function initDashboardFilters() {
   applyFiltersAndSort();
 }
 
+function initOllamaStatus() {
+  var indicator = document.getElementById('ollama-status-indicator');
+  if (!indicator) return;
+
+  var statusUrl = indicator.dataset.statusUrl;
+  if (!statusUrl) return;
+
+  fetch(statusUrl)
+    .then(function(response) {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then(function(data) {
+      var textEl = indicator.querySelector('.ollama-status-text');
+      indicator.classList.remove('status-checking', 'status-ok', 'status-error');
+
+      if (data.ok) {
+        indicator.classList.add('status-ok');
+        indicator.title = 'Local model ready';
+        if (textEl) {
+          textEl.textContent = data.model || 'Gemma';
+        }
+      } else {
+        indicator.classList.add('status-error');
+        indicator.title = 'Local model not detected';
+        if (textEl) {
+          textEl.textContent = 'Model offline';
+        }
+      }
+    })
+    .catch(function(error) {
+      console.error('Error checking Ollama status:', error);
+      var textEl = indicator.querySelector('.ollama-status-text');
+      indicator.classList.remove('status-checking', 'status-ok', 'status-error');
+      indicator.classList.add('status-error');
+      indicator.title = 'Local model not detected';
+      if (textEl) {
+        textEl.textContent = 'Model offline';
+      }
+    });
+}
+
 // Initialize filters
 initDashboardFilters();
+
+// Initialize Ollama status
+initOllamaStatus();

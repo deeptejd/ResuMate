@@ -5,10 +5,11 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{% block title %}LocalHire{% endblock %}</title>
+    <title>{% block title %}ResuMate{% endblock %}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <link rel="stylesheet" href="{% static 'css/style.css' %}" />
 </head>
 
@@ -19,22 +20,16 @@
     <nav class="nav">
         <div class="nav-inner">
             <a href="{% url 'dashboard' %}" class="nav-logo">
-                <span class="nav-logo-mark">L</span>
-                LocalHire
+                <span class="nav-logo-mark">R</span>
+                ResuMate
             </a>
             <div class="nav-right">
-                <span class="ollama-status {% if ollama_status.ok %}status-ok{% else %}status-error{% endif %}" title="{% if ollama_status.ok %}Local model ready{% else %}Local model not detected{% endif %}">
+                <span id="ollama-status-indicator" class="ollama-status status-checking" data-status-url="{% url 'ollama_status_api' %}" title="Checking local model status...">
                     <span class="status-dot"></span>
-                    {% if ollama_status.ok %}
-                    <span class="ollama-model">{{ ollama_status.model }}</span>
-                    {% else %}
-                    Model offline
-                    {% endif %}
+                    <span class="ollama-status-text">Checking model...</span>
                 </span>
                 <a href="{% url 'new_job' %}" class="btn btn-primary">
-                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-                        <path d="M7 2.5v9M2.5 7h9" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/>
-                    </svg>
+                    <span class="material-symbols-outlined" style="font-size: 16px; margin-right: 2px;">add</span>
                     New job
                 </a>
             </div>
@@ -58,17 +53,11 @@
     <footer class="site-footer">
         <div class="footer-inner">
             <div class="footer-badge footer-badge-privacy">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                    <rect x="3" y="7" width="10" height="7" rx="1.5" stroke="currentColor" stroke-width="1.4"/>
-                    <path d="M5 7V5a3 3 0 016 0v2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
-                </svg>
+                <span class="material-symbols-outlined" style="font-size: 18px;">shield</span>
                 <span><strong>100% on your machine.</strong> Resumes and job descriptions are never uploaded to the cloud.</span>
             </div>
             <div class="footer-badge footer-badge-model">
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-                    <circle cx="8" cy="8" r="5.5" stroke="currentColor" stroke-width="1.4"/>
-                    <path d="M5.5 8h5M8 5.5v5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
-                </svg>
+                <span class="material-symbols-outlined" style="font-size: 18px;">memory</span>
                 <span>Powered by <strong>Google Gemma 4</strong> models running entirely on your device.</span>
             </div>
         </div>

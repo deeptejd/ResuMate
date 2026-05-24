@@ -44,3 +44,15 @@ class ExportCoverLetterTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response['Content-Type'], 'application/pdf')
 
+
+class OllamaStatusApiTestCase(TestCase):
+    def test_ollama_status_api_returns_json(self):
+        response = self.client.get(reverse('ollama_status_api'))
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Content-Type'], 'application/json')
+        data = response.json()
+        self.assertIn('ok', data)
+        self.assertIn('model', data)
+        self.assertIn('has_gemma', data)
+
+

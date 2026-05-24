@@ -319,3 +319,8 @@ def delete_job(request, job_id):
     job.delete()
     messages.success(request, f'Job deleted.')
     return redirect('dashboard')
+
+
+def ollama_status_api(request):
+    status = ol.check_connection()
+    return JsonResponse(status)

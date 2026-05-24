@@ -1,6 +1,6 @@
 {% extends 'core/base.html' %}
 
-{% block title %}New Job — LocalHire{% endblock %}
+{% block title %}New Job — ResuMate{% endblock %}
 
 {% block content %}
 <div class="page-header">
@@ -11,10 +11,7 @@
 
 <div class="form-page">
     <div class="form-step-hint">
-        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
-            <circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.5"/>
-            <path d="M9 8v5M9 5.5v.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-        </svg>
+        <span class="material-symbols-outlined" style="font-size: 18px;">info</span>
         <span>Paste the full job description — requirements, responsibilities, and company details. Google Gemma 4 will analyze match, write a cover letter, and more — all locally.</span>
     </div>
 
@@ -47,9 +44,7 @@
             <a href="{% url 'dashboard' %}" class="btn btn-ghost">Cancel</a>
             <button type="submit" class="btn btn-primary">
                 Run analysis
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-                    <path d="M3 7h8M8 4l3 3-3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
+                <span class="material-symbols-outlined" style="font-size: 16px; margin-left: 2px;">arrow_forward</span>
             </button>
         </div>
     </form>

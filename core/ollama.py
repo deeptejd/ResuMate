@@ -3,43 +3,49 @@ import requests
 from django.conf import settings
 
 
+import time
+
+_cached_status = None
+_cached_time = 0
+CACHE_TTL = 10  # Cache duration in seconds
+
+
 def get_model_name():
-    try:
-        response = requests.get(
-            f"{settings.OLLAMA_BASE_URL}/api/tags",
-            timeout=5
-        )
-        if response.status_code == 200:
-            models = [m['name'] for m in response.json().get('models', [])]
-            gemma = next(
-                (m for m in models if 'gemma' in m.lower()), None
-            )
-            if gemma:
-                return gemma
-    except Exception:
-        pass
+    status = check_connection()
+    if status['ok'] and status['has_gemma']:
+        return status['model']
     return settings.OLLAMA_MODEL
 
 
 def check_connection():
+    global _cached_status, _cached_time
+    now = time.time()
+    if _cached_status is not None and (now - _cached_time) < CACHE_TTL:
+        return _cached_status
+
     try:
         response = requests.get(
             f"{settings.OLLAMA_BASE_URL}/api/tags",
-            timeout=5
+            timeout=2
         )
         if response.status_code == 200:
             models = [m['name'] for m in response.json().get('models', [])]
             gemma = next(
                 (m for m in models if 'gemma' in m.lower()), None
             )
-            return {
+            _cached_status = {
                 'ok': True,
                 'model': gemma or settings.OLLAMA_MODEL,
                 'has_gemma': gemma is not None,
             }
+            _cached_time = now
+            return _cached_status
     except Exception:
         pass
-    return {'ok': False, 'model': None, 'has_gemma': False}
+
+    _cached_status = {'ok': False, 'model': None, 'has_gemma': False}
+    _cached_time = now
+    return _cached_status
 
 
 def stream_prompt(prompt, model=None):
