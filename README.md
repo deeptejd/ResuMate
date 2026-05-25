@@ -50,7 +50,7 @@ Edit `.env`:
 
 ```
 OLLAMA_BASE_URL=http://localhost:11434
-OLLAMA_MODEL=gemma4:2b
+OLLAMA_MODEL=gemma4:e2b
 ```
 
 **RAM deprived and Running Ollama on a different machine?** Set `OLLAMA_BASE_URL` to that machine's local IP and start Ollama with:
