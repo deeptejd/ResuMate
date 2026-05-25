@@ -50,16 +50,36 @@ Edit `.env`:
 
 ```
 OLLAMA_BASE_URL=http://localhost:11434
-OLLAMA_MODEL=gemma4:e2b
 ```
 
-**RAM deprived and Running Ollama on a different machine?** Set `OLLAMA_BASE_URL` to that machine's local IP and start Ollama with:
+**RAM deprived like me and Running Ollama on a different machine?** Make sure both machines are connected to the same WiFi and set `OLLAMA_BASE_URL` to that machine's local IP and follow these steps on that machine:
 
+First, stop Ollama if it is already running:
+ 
 ```bash
-OLLAMA_HOST=0.0.0.0 ollama serve
+# Mac or Linux
+pkill ollama
+# or
+sudo systemctl stop ollama
+ 
+# Windows
+taskkill /IM ollama.exe /F
 ```
-
-> Both machines need to be on the same WiFi network.
+ 
+Then restart it with the host flag so it accepts connections from other machines on the network:
+ 
+```bash
+# Mac or Linux
+OLLAMA_HOST=0.0.0.0 ollama serve
+ 
+# Windows (Command Prompt)
+set OLLAMA_HOST=0.0.0.0
+ollama serve
+ 
+# Windows (PowerShell)
+$env:OLLAMA_HOST="0.0.0.0"
+ollama serve
+```
 
 To find the local IP of that machine, run this on it:
 
@@ -76,3 +96,14 @@ Look for an address starting with `192.168.` or `10.` - that is your local IP. Y
 ```
 OLLAMA_BASE_URL=http://192.168.x.x:11434
 ```
+
+---
+ 
+## Troubleshooting
+ 
+| Problem | Fix |
+|---|---|
+| Ollama shows offline | Check `OLLAMA_BASE_URL` in `.env` matches where Ollama is running |
+| Model not found | Run `ollama list` and make sure `gemma4:e2b` is present |
+| Resume upload fails | Make sure the file is a text-based PDF, not a scanned image — or upload a DOCX instead |
+ 
